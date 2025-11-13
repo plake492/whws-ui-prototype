@@ -1,7 +1,12 @@
+'use client';
+
 import React from 'react';
 import CicleIcon from '@/components/CircleIcon';
+import ChatBotMinimal from '@/components/ChatBotMinimal';
+import Header from '@/components/Header';
 import { Box, Typography, Button, Container, Grid, Paper, Stack } from '@mui/material';
 import Image from 'next/image';
+import { Pallet } from '@mui/icons-material';
 
 const data: { icon: 'chat' | 'community' | 'health'; text: string }[] = [
   { icon: 'chat', text: 'Knowledge' },
@@ -12,8 +17,34 @@ const data: { icon: 'chat' | 'community' | 'health'; text: string }[] = [
 export default function App() {
   return (
     <>
-      <Box className="hero animated-gradient" sx={{ py: 10, textAlign: 'center' }}>
-        <Container>
+      <Header />
+      <Box className="hero" sx={{ py: 10, textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <Image
+          src={
+            'https://images.unsplash.com/photo-1484627147104-f5197bcd6651?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D '
+          }
+          fill
+          alt=""
+          style={{
+            objectFit: 'cover',
+            objectPosition: 'right',
+            zIndex: -1,
+          }}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background:
+              'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.2) 100%)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+        <Container sx={{ position: 'relative', zIndex: 1 }}>
           <Box>
             <Typography variant="h1" gutterBottom>
               Supporting Women's <span className="accent">Health</span> & Wellness
@@ -85,6 +116,18 @@ export default function App() {
           ))}
         </Grid>
       </Container>
+      <Box
+        sx={({ palette }) => ({
+          backgroundColor: palette.accent.yellow,
+          height: '400px',
+          display: 'grid',
+          placeContent: 'center',
+        })}
+      >
+        <Typography variant="h1">THIS IS A BLOCK</Typography>
+      </Box>
+
+      <ChatBotMinimal />
 
       <Box sx={{ backgroundColor: '#333333', color: '#eeeeee', p: 4 }} component="footer">
         <Typography variant="body2">© 2025 WHWS Inspired UI Demo</Typography>

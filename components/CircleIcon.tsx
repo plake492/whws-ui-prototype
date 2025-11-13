@@ -92,8 +92,8 @@ export default function CicleIcon({
     Math.PI / 2, // Bottom-center (90 degrees)
   ];
 
-  // Starting position (bottom of circle)
-  const startAngle = Math.PI / 2; // 90 degrees
+  // Starting position (center of circle)
+  const startPosition = { x: 0, y: 0 };
 
   // Function to generate keyframes for each icon
   const generatePathKeyframes = (finalAngle: number) => {
@@ -103,10 +103,10 @@ export default function CicleIcon({
 
     for (let step = 0; step <= steps; step++) {
       const progress = step / steps;
-      // Interpolate angle from start to final along the circle
-      const currentAngle = startAngle + (finalAngle - startAngle) * progress;
-      const x = circleRadius * Math.cos(currentAngle);
-      const y = circleRadius * Math.sin(currentAngle);
+      // Start from center (0, 0) and move outward to final position
+      const currentRadius = circleRadius * progress;
+      const x = currentRadius * Math.cos(finalAngle);
+      const y = currentRadius * Math.sin(finalAngle);
       const percentage = (progress * 100).toFixed(2);
 
       keyframeString += `${percentage}% { transform: translate(${x}px, ${y}px) translate(-50%, -50%); }\n`;
@@ -118,6 +118,9 @@ export default function CicleIcon({
   // Generate keyframes for each icon path
   const pathAnimations = customAngles.map((angle) => generatePathKeyframes(angle));
 
+  // Animation delays for staggered start (in seconds)
+  const iconDelays = [0, 0.15, 0.3]; // Stagger icon animations by 0.15s
+
   // Text positions relative to icons
   // top-left: above and to the left, top-right: above and to the right, bottom: below
   const textPositions = [
@@ -126,8 +129,8 @@ export default function CicleIcon({
     { bottom: '-54px', left: '50%', transform: 'translateX(-50%) !important', textAlign: 'center' as const }, // bottom-center icon
   ];
 
-  // Text animation delays: start after circle animation (1.5s), then stagger by 0.2s
-  const textDelays = [1.5, 1.7, 1.9]; // top-left, top-right, bottom-center
+  // Text animation delays: start after circle animation (1.5s + icon delay), then stagger by 0.2s
+  const textDelays = [1.5, 1.65 + 0.15, 1.8 + 0.3]; // Account for icon stagger delays
 
   return (
     <Box
@@ -154,7 +157,8 @@ export default function CicleIcon({
               top: '50%',
               left: '50%',
               transform: `translate(${finalX}px, ${finalY}px) translate(-50%, -50%)`,
-              animation: `${pathAnimations[i]} 1.5s forwards, ${fadeIn} 1s forwards`,
+              animation: `${pathAnimations[i]} 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards, ${fadeIn} 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
+              animationDelay: `${iconDelays[i]}s`,
               opacity: 0,
             }}
           >
