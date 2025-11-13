@@ -71,6 +71,7 @@ export default function Header() {
             <Box onMouseLeave={handleCommunityMouseLeave}>
               <Button
                 onMouseEnter={handleCommunityMouseEnter}
+                onClick={() => router.push('/community')}
                 endIcon={<KeyboardArrowDownIcon />}
                 sx={({ palette }) => ({
                   color: 'text.primary',
@@ -125,6 +126,7 @@ export default function Header() {
             <Box onMouseLeave={handleChatMouseLeave}>
               <Button
                 onMouseEnter={handleChatMouseEnter}
+                onClick={() => router.push('/chat')}
                 endIcon={<KeyboardArrowDownIcon />}
                 sx={({ palette }) => ({
                   color: 'text.primary',

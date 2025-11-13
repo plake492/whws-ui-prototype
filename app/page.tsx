@@ -7,6 +7,7 @@ import Header from '@/components/Header';
 import { Box, Typography, Button, Container, Grid, Paper, Stack } from '@mui/material';
 import Image from 'next/image';
 import { Pallet } from '@mui/icons-material';
+import Link from 'next/link';
 
 const data: { icon: 'chat' | 'community' | 'health'; text: string }[] = [
   { icon: 'chat', text: 'Knowledge' },
@@ -61,7 +62,7 @@ export default function App() {
             <Button variant="contained" color="primary" size="large">
               Learn how to get involved
             </Button>
-            <Button variant="outlined" color="primary" size="large">
+            <Button variant="outlined" color="primary" size="large" component={Link} href="/communities">
               Explore communities
             </Button>
           </Box>
