@@ -17,12 +17,13 @@ export default createTheme({
     accent: {
       pink: '#ed5a9f', // Pink circle
       purple: '#9b7ddb', // Purple circle
-      yellow: '#f5c347', // Yellow circle
+      yellow: 'rgb(253, 206, 99)', // Yellow circle
     },
     background: {
       default: '#ffffff',
       paper: '#ffffff',
       cream: '#f9e6b8', // Yellow banner sections
+      gray: '#333333',
     },
     text: {
       primary: '#2d2d2d',
@@ -117,5 +118,6 @@ declare module '@mui/material/styles' {
   }
   interface TypeBackground {
     cream?: string;
+    gray?: string;
   }
 }

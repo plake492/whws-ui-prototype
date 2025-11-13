@@ -23,6 +23,13 @@ const INITAL_MESSAGE: Message = {
   timestamp: new Date(),
 };
 
+const SUGGESTED_PROMPTS = [
+  'What are the common symptoms of menopause?',
+  'How can I manage hot flashes?',
+  'What lifestyle changes help with menopause?',
+  'When should I talk to my doctor about menopause?',
+];
+
 export default function Component() {
   const [messages, setMessages] = useState<Message[]>([INITAL_MESSAGE]);
   const [isLoading, setIsLoading] = useState(false);
@@ -132,45 +139,20 @@ export default function Component() {
     }
   };
 
-  const newChat = () => {
-    setMessages([INITAL_MESSAGE]);
-  };
-
   return (
     <Box
-      sx={{
+      sx={({ palette }) => ({
         height: '100dvh',
         width: '100dvw',
-        overflow: 'hidden',
+        overflow: 'auto',
         display: 'flex',
         flexDirection: 'column',
         bgcolor: 'background.default',
-      }}
+        maxHeight: '900px',
+        position: 'relative',
+      })}
       className="animated-gradient"
     >
-      {/* Header */}
-      <Paper
-        component="header"
-        elevation={0}
-        sx={({ palette }) => ({
-          width: '100%',
-          bgcolor: palette.accent.yellow,
-          p: 2,
-          zIndex: 10,
-        })}
-      >
-        <Container maxWidth="lg">
-          <Stack justifyContent={'space-between'} flexDirection={'row'} alignItems={'center'}>
-            <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
-              AI Chat Assistant
-            </Typography>
-            <Button variant="outlined" startIcon={<AddIcon />} sx={{ borderRadius: 2 }} onClick={newChat}>
-              New Chat
-            </Button>
-          </Stack>
-        </Container>
-      </Paper>
-
       {/* Main Chat Area */}
       <Container
         component="main"
@@ -180,35 +162,43 @@ export default function Component() {
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
+          position: 'relative',
         }}
       >
-        <ChatMessages messages={messages} />
+        <ChatMessages
+          messages={messages}
+          preventScroll
+          showPlaceholder
+          scrollOnResponse
+          suggestedPrompts={SUGGESTED_PROMPTS}
+          onPromptClick={handleSendMessage}
+        />
       </Container>
 
       {/* Footer */}
-      <Box>
-        {error && (
-          <Alert severity="error" onClose={() => setError(null)}>
-            {error}
-          </Alert>
-        )}
-        <Paper
-          elevation={0}
-          sx={({ palette }) => ({
-            p: 2,
-            borderTopRightRadius: 10,
-            borderTopLeftRadius: 10,
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-            bgcolor: palette.accent.yellow,
-            width: '100%',
-          })}
-        >
-          <Container maxWidth="lg">
-            <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
-          </Container>
-        </Paper>
-      </Box>
+      <Container>
+        <Box>
+          {error && (
+            <Alert severity="error" onClose={() => setError(null)}>
+              {error}
+            </Alert>
+          )}
+          <Paper
+            elevation={0}
+            sx={({ palette }) => ({
+              p: 2,
+              borderRadius: 10,
+              bgcolor: palette.accent.yellow,
+              width: '100%',
+              mb: 4,
+            })}
+          >
+            <Container maxWidth="lg">
+              <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+            </Container>
+          </Paper>
+        </Box>
+      </Container>
     </Box>
   );
 }

@@ -1,30 +1,38 @@
 // Quick reference object you can import
 export const colors = {
-  primary: {
-    navy: '#1e3a5f',
-    navyLight: '#2d4a6f',
-    navyDark: '#0f2340',
+  navy: {
+    main: '#1e3a5f',
+    light: '#2d4a6f',
+    dark: '#0f2340',
   },
-  secondary: {
-    gold: '#f5a847',
-    goldLight: '#f7b965',
-    goldDark: '#d89030',
+  gold: {
+    main: '#f5a847',
+    light: '#f7b965',
+    dark: '#d89030',
   },
-  accent: {
-    pink: '#ed5a9f',
-    purple: '#9b7ddb',
-    yellow: '#f5c347',
+  pink: {
+    main: '#ed5a9f',
+    light: '#f29bba',
+    dark: '#d4468a',
   },
-  background: {
-    white: '#ffffff',
-    cream: '#f9e6b8',
+  purple: {
+    main: '#9b7ddb',
+    light: '#b199e5',
+    dark: '#7f5fc7',
   },
-  text: {
-    primary: '#2d2d2d',
-    secondary: '#5a5a5a',
-    disabled: '#9e9e9e',
+  yellow: {
+    main: '#f5c347',
+    light: '#f8d06f',
+    dark: '#daa92e',
   },
-  button: {
-    dark: '#1e1e1e',
+  cream: {
+    main: '#f9e6b8',
+    light: '#fef3d9',
+    dark: '#f5d898',
+  },
+  white: {
+    main: '#ffffff',
+    light: '#ffffff',
+    dark: '#f5f5f5',
   },
 };
