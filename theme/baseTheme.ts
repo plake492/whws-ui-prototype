@@ -23,6 +23,7 @@ export default createTheme({
       default: '#ffffff',
       paper: '#ffffff',
       cream: '#f9e6b8', // Yellow banner sections
+      gray: '#333333',
     },
     text: {
       primary: '#2d2d2d',
@@ -117,5 +118,6 @@ declare module '@mui/material/styles' {
   }
   interface TypeBackground {
     cream?: string;
+    gray?: string;
   }
 }
