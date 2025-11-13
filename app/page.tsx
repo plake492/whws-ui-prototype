@@ -1,5 +1,12 @@
 import React from 'react';
-import { Box, Typography, Button, Container, Grid, Paper } from '@mui/material';
+import CicleIcon from '@/components/CircleIcon';
+import { Box, Typography, Button, Container, Grid, Paper, Stack } from '@mui/material';
+
+const data = [
+  { icon: 'chat', text: 'Hello' },
+  { icon: 'community', text: 'how are ' },
+  { icon: 'health', text: 'You' },
+];
 
 export default function App() {
   return (
@@ -22,6 +29,10 @@ export default function App() {
           </Box>
         </Container>
       </Box>
+
+      <Stack alignItems={'center'}>
+        <CicleIcon data={data} />
+      </Stack>
 
       <Container sx={{ py: 8 }}>
         <Typography variant="h2" gutterBottom>

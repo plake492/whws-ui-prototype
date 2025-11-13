@@ -17,7 +17,7 @@ export default createTheme({
     accent: {
       pink: '#ed5a9f', // Pink circle
       purple: '#9b7ddb', // Purple circle
-      yellow: '#f5c347', // Yellow circle
+      yellow: 'rgb(253, 206, 99)', // Yellow circle
     },
     background: {
       default: '#ffffff',

@@ -26,46 +26,40 @@ export default function ChatInput({ onSendMessage, disabled = false }: ChatInput
   };
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        p: 2,
-        borderRadius: 2,
-        bgcolor: 'background.paper',
-        width: '100%',
-      }}
-    >
-      <Stack direction="row" spacing={2} alignItems="flex-end">
-        <TextField
-          fullWidth
-          multiline
-          maxRows={4}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Type your message..."
-          variant="outlined"
-          disabled={disabled}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: 2,
-            },
-          }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSend}
-          disabled={!input.trim() || disabled}
-          sx={{
-            minWidth: '100px',
-            height: '56px',
+    <Stack direction="row" spacing={2} alignItems="flex-end">
+      <TextField
+        fullWidth
+        multiline
+        maxRows={4}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyPress={handleKeyPress}
+        placeholder="Type your message..."
+        variant="outlined"
+        disabled={disabled}
+        sx={({ palette }) => ({
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: palette.primary.dark,
+          },
+          '& .MuiOutlinedInput-root': {
             borderRadius: 2,
-          }}
-        >
-          {disabled ? 'Sending...' : 'Send'}
-        </Button>
-      </Stack>
-    </Paper>
+            borderColor: palette.primary.dark,
+          },
+        })}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSend}
+        disabled={!input.trim() || disabled}
+        sx={{
+          minWidth: '100px',
+          height: '56px',
+          borderRadius: 2,
+        }}
+      >
+        {disabled ? 'Sending...' : 'Send'}
+      </Button>
+    </Stack>
   );
 }

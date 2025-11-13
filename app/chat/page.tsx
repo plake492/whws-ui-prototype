@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Box, Stack, Paper, Typography, Alert } from '@mui/material';
+import { Container, Box, Stack, Paper, Typography, Alert, Button } from '@mui/material';
 import ChatMessages from '@/components/ChatMessages';
 import ChatInput from '@/components/ChatInput';
 import { sendChatMessageStream, ChatMessage as ApiChatMessage, StreamChunk } from '@/utils/api';
+import AddIcon from '@mui/icons-material/Add';
+import { colors } from '@/theme/colors';
 
 export interface Message {
   id: string;
@@ -14,16 +16,15 @@ export interface Message {
   sources?: StreamChunk['sources'];
   isStreaming?: boolean;
 }
+const INITAL_MESSAGE: Message = {
+  id: '1',
+  role: 'assistant',
+  content: 'Hello! How can I help you today?',
+  timestamp: new Date(),
+};
 
-export default function ChatAltPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: 'Hello! How can I help you today?',
-      timestamp: new Date(),
-    },
-  ]);
+export default function Component() {
+  const [messages, setMessages] = useState<Message[]>([INITAL_MESSAGE]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,36 +63,31 @@ export default function ChatAltPage() {
       await sendChatMessageStream(content, history, {
         onChunk: (chunk: string) => {
           setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === assistantMessageId ? { ...msg, content: msg.content + chunk } : msg
-            )
+            prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: msg.content + chunk } : msg))
           );
         },
         onSources: (sources) => {
           // Deduplicate sources based on content and source URL
-          const deduplicatedSources = sources?.reduce((acc, source) => {
-            const isDuplicate = acc.some(
-              (existing) =>
-                existing.content === source.content &&
-                existing.metadata.source === source.metadata.source
-            );
-            if (!isDuplicate) {
-              acc.push(source);
-            }
-            return acc;
-          }, [] as typeof sources);
+          const deduplicatedSources = sources?.reduce(
+            (acc, source) => {
+              const isDuplicate = acc.some(
+                (existing) => existing.content === source.content && existing.metadata.source === source.metadata.source
+              );
+              if (!isDuplicate) {
+                acc.push(source);
+              }
+              return acc;
+            },
+            [] as typeof sources
+          );
 
           setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === assistantMessageId ? { ...msg, sources: deduplicatedSources } : msg
-            )
+            prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, sources: deduplicatedSources } : msg))
           );
         },
         onComplete: () => {
           setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === assistantMessageId ? { ...msg, isStreaming: false } : msg
-            )
+            prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, isStreaming: false } : msg))
           );
           setIsLoading(false);
         },
@@ -136,6 +132,10 @@ export default function ChatAltPage() {
     }
   };
 
+  const newChat = () => {
+    setMessages([INITAL_MESSAGE]);
+  };
+
   return (
     <Box
       sx={{
@@ -146,23 +146,28 @@ export default function ChatAltPage() {
         flexDirection: 'column',
         bgcolor: 'background.default',
       }}
+      className="animated-gradient"
     >
       {/* Header */}
       <Paper
         component="header"
-        elevation={2}
-        sx={(theme) => ({
+        elevation={0}
+        sx={({ palette }) => ({
           width: '100%',
-          backgroundColor: theme.palette.accent.yellow,
-          borderRadius: 0,
+          bgcolor: palette.accent.yellow,
           p: 2,
           zIndex: 10,
         })}
       >
         <Container maxWidth="lg">
-          <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
-            AI Chat Assistant
-          </Typography>
+          <Stack justifyContent={'space-between'} flexDirection={'row'} alignItems={'center'}>
+            <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+              AI Chat Assistant
+            </Typography>
+            <Button variant="outlined" startIcon={<AddIcon />} sx={{ borderRadius: 2 }} onClick={newChat}>
+              New Chat
+            </Button>
+          </Stack>
         </Container>
       </Paper>
 
@@ -175,27 +180,35 @@ export default function ChatAltPage() {
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          py: 3,
         }}
       >
-        <Stack
-          spacing={2}
-          sx={{
-            flex: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          {error && (
-            <Alert severity="error" onClose={() => setError(null)}>
-              {error}
-            </Alert>
-          )}
-          <ChatMessages messages={messages} />
-          <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
-        </Stack>
+        <ChatMessages messages={messages} />
       </Container>
+
+      {/* Footer */}
+      <Box>
+        {error && (
+          <Alert severity="error" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
+        <Paper
+          elevation={0}
+          sx={({ palette }) => ({
+            p: 2,
+            borderTopRightRadius: 10,
+            borderTopLeftRadius: 10,
+            borderBottomLeftRadius: 0,
+            borderBottomRightRadius: 0,
+            bgcolor: palette.accent.yellow,
+            width: '100%',
+          })}
+        >
+          <Container maxWidth="lg">
+            <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+          </Container>
+        </Paper>
+      </Box>
     </Box>
   );
 }

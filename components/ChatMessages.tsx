@@ -3,6 +3,7 @@
 import { useRef, useEffect } from 'react';
 import { Box, Paper, Typography, Stack, Chip, Collapse, Link } from '@mui/material';
 import { Message } from '../app/chat/page';
+import { Pallet } from '@mui/icons-material';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -35,127 +36,134 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
         },
       }}
     >
-      {messages.map((message) => (
-        <Box
-          key={message.id}
-          sx={{
-            display: 'flex',
-            justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
-            width: '100%',
-          }}
-        >
-          <Paper
-            elevation={1}
+      {messages.map((message) => {
+        const isUser = message.role === 'user';
+
+        return (
+          <Box
+            key={message.id}
             sx={{
-              maxWidth: '70%',
-              p: 2,
-              bgcolor: message.role === 'user' ? 'primary.main' : 'background.cream',
-              color: message.role === 'user' ? 'white' : 'text.primary',
-              borderRadius: 2,
+              display: 'flex',
+              justifyContent: isUser ? 'flex-end' : 'flex-start',
+              width: '100%',
             }}
           >
-            <Stack spacing={1}>
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  opacity: 0.8,
-                  letterSpacing: '0.05em',
-                }}
-              >
-                {message.role === 'user' ? 'You' : 'Assistant'}
-                {message.isStreaming && (
-                  <Chip label="Typing..." size="small" sx={{ ml: 1, height: 20, fontSize: '0.7rem' }} />
-                )}
-              </Typography>
-              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                {message.content || (message.isStreaming ? '' : 'No response')}
-                {message.isStreaming && !message.content && (
-                  <Box component="span" sx={{ animation: 'blink 1.5s infinite' }}>
-                    ▋
-                  </Box>
-                )}
-              </Typography>
+            <Paper
+              elevation={0}
+              sx={({ palette }) => ({
+                maxWidth: isUser ? '70%' : '100%',
+                px: 4,
+                py: 1.5,
+                background: isUser
+                  ? `linear-gradient(45deg, ${palette.primary.dark}, ${palette.primary.main} ,${palette.primary.light})`
+                  : 'transparent',
+                color: isUser ? 'white' : 'text.primary',
+                borderRadius: 2,
+              })}
+            >
+              <Stack spacing={1} display={isUser ? 'flex' : 'block'}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    opacity: 0.8,
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {isUser ? 'You' : 'Assistant'}
+                  {message.isStreaming && (
+                    <Chip label="Typing..." size="small" sx={{ ml: 1, height: 20, fontSize: '0.7rem' }} />
+                  )}
+                </Typography>
+                <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                  {message.content || (message.isStreaming ? '' : 'No response')}
+                  {message.isStreaming && !message.content && (
+                    <Box component="span" sx={{ animation: 'blink 1.5s infinite' }}>
+                      ▋
+                    </Box>
+                  )}
+                </Typography>
 
-              {/* Sources Section */}
-              {message.sources && message.sources.length > 0 && (
-                <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      mb: 1,
-                      display: 'block',
-                    }}
-                  >
-                    Sources ({message.sources.length})
-                  </Typography>
-                  <Stack spacing={1}>
-                    {message.sources.map((source, idx) => (
-                      <Paper
-                        key={idx}
-                        elevation={0}
-                        sx={{
-                          p: 1.5,
-                          bgcolor: message.role === 'user' ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.05)',
-                          borderRadius: 1,
-                        }}
-                      >
-                        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-                          {typeof source.metadata.title === 'string' && source.metadata.title && (
-                            <strong>{String(source.metadata.title)}</strong>
-                          )}
-                          {typeof source.metadata.organization === 'string' && source.metadata.organization && (
-                            <> - {String(source.metadata.organization)}</>
-                          )}
-                        </Typography>
-                        <Typography
-                          variant="body2"
+                {/* Sources Section */}
+                {message.sources && message.sources.length > 0 && (
+                  <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        mb: 1,
+                        display: 'block',
+                      }}
+                    >
+                      Sources ({message.sources.length})
+                    </Typography>
+                    <Stack spacing={1}>
+                      {message.sources.map((source, idx) => (
+                        <Paper
+                          key={idx}
+                          elevation={0}
                           sx={{
-                            fontSize: '0.75rem',
-                            opacity: 0.9,
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
+                            p: 1.5,
+                            bgcolor: isUser ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.05)',
+                            borderRadius: 1,
                           }}
                         >
-                          {source.content}
-                        </Typography>
-                        {typeof source.metadata.source === 'string' && source.metadata.source && (
-                          <Link
-                            href={String(source.metadata.source)}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
+                            {typeof source.metadata.title === 'string' && source.metadata.title && (
+                              <strong>{String(source.metadata.title)}</strong>
+                            )}
+                            {typeof source.metadata.organization === 'string' && source.metadata.organization && (
+                              <> - {String(source.metadata.organization)}</>
+                            )}
+                          </Typography>
+                          <Typography
+                            variant="body2"
                             sx={{
-                              fontSize: '0.7rem',
-                              display: 'block',
-                              mt: 0.5,
-                              color: message.role === 'user' ? 'white' : 'primary.main',
+                              fontSize: '0.75rem',
+                              opacity: 0.9,
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
                             }}
                           >
-                            View Source →
-                          </Link>
-                        )}
-                      </Paper>
-                    ))}
-                  </Stack>
-                </Box>
-              )}
+                            {source.content}
+                          </Typography>
+                          {typeof source.metadata.source === 'string' && source.metadata.source && (
+                            <Link
+                              href={String(source.metadata.source)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              sx={{
+                                fontSize: '0.7rem',
+                                display: 'block',
+                                mt: 0.5,
+                                color: isUser ? 'white' : 'primary.main',
+                              }}
+                            >
+                              View Source →
+                            </Link>
+                          )}
+                        </Paper>
+                      ))}
+                    </Stack>
+                  </Box>
+                )}
 
-              <Typography variant="caption" sx={{ opacity: 0.7, textAlign: 'right' }}>
-                {message.timestamp.toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Typography>
-            </Stack>
-          </Paper>
-        </Box>
-      ))}
+                <Typography variant="caption" sx={{ opacity: 0.7, textAlign: 'right' }}>
+                  {message.timestamp.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </Typography>
+              </Stack>
+            </Paper>
+          </Box>
+        );
+      })}
       <div ref={messagesEndRef} />
     </Box>
   );
