@@ -1,17 +1,80 @@
 'use client';
 
-import { Container, Typography, Box, Button, Stack, Chip, Card, CardContent, Avatar } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Container, Typography, Box, Button, Stack, Chip, Card, CardContent, Avatar, CircularProgress } from '@mui/material';
 import { People, Forum, ArrowBack } from '@mui/icons-material';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { getCommunityBySlug, getPostsByCommunity, getUserById } from '@/lib/dummyData';
+import { useParams, useRouter } from 'next/navigation';
+import { getUserById } from '@/lib/dummyData';
 import { formatTimeAgo } from '@/utils/formatTime';
 import Header from '@/components/Header';
 
 export default function CommunityPage() {
   const params = useParams();
-  const community = getCommunityBySlug(params.slug);
-  const posts = community ? getPostsByCommunity(community.id) : [];
+  const router = useRouter();
+  const [community, setCommunity] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isJoining, setIsJoining] = useState(false);
+
+  useEffect(() => {
+    const fetchCommunity = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/communities/${params.slug}`);
+        if (response.ok) {
+          const data = await response.json();
+          setCommunity(data);
+        } else if (response.status === 404) {
+          setCommunity(null);
+        }
+      } catch (error) {
+        console.error('Error fetching community:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.slug) {
+      fetchCommunity();
+    }
+  }, [params.slug]);
+
+  const handleJoinToggle = async () => {
+    if (!community) return;
+
+    setIsJoining(true);
+    try {
+      const method = community.isJoined ? 'DELETE' : 'POST';
+      const response = await fetch(`/api/communities/${community.id}/join`, {
+        method,
+      });
+
+      if (response.ok) {
+        setCommunity({
+          ...community,
+          isJoined: !community.isJoined,
+          memberCount: community.isJoined ? community.memberCount - 1 : community.memberCount + 1,
+        });
+      } else if (response.status === 401) {
+        router.push('/login?redirectTo=' + window.location.pathname);
+      }
+    } catch (error) {
+      console.error('Error toggling membership:', error);
+    } finally {
+      setIsJoining(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <Container sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+          <CircularProgress />
+        </Container>
+      </>
+    );
+  }
 
   if (!community) {
     return (
@@ -73,8 +136,8 @@ export default function CommunityPage() {
             ))}
           </Stack>
 
-          <Button variant="contained" size="large">
-            Join Community
+          <Button variant={community.isJoined ? 'outlined' : 'contained'} size="large" onClick={handleJoinToggle} disabled={isJoining}>
+            {isJoining ? (community.isJoined ? 'Leaving...' : 'Joining...') : (community.isJoined ? 'Leave Community' : 'Join Community')}
           </Button>
         </Box>
 
@@ -84,43 +147,42 @@ export default function CommunityPage() {
         </Typography>
 
         <Stack spacing={2}>
-          {posts.map((post) => {
-            const author = getUserById(post.authorId);
-            return (
-              <Card key={post.id}>
-                <CardContent>
-                  <Stack direction="row" spacing={2} mb={2}>
-                    <Avatar src={author?.avatar} />
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={600}>
-                        {author?.displayName}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {formatTimeAgo(post.createdAt)}
-                      </Typography>
-                    </Box>
-                  </Stack>
+          {community.posts && community.posts.length > 0 ? (
+            community.posts.map((post) => {
+              const author = getUserById(post.authorId);
+              return (
+                <Card key={post.id}>
+                  <CardContent>
+                    <Stack direction="row" spacing={2} mb={2}>
+                      <Avatar src={author?.avatar} />
+                      <Box>
+                        <Typography variant="subtitle2" fontWeight={600}>
+                          {author?.displayName || 'Anonymous'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {formatTimeAgo(post.createdAt)}
+                        </Typography>
+                      </Box>
+                    </Stack>
 
-                  <Typography variant="h6" fontWeight={600} mb={1}>
-                    {post.title}
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary" mb={2}>
-                    {post.content}
-                  </Typography>
-
-                  <Stack direction="row" spacing={3}>
-                    <Typography variant="body2" color="text.secondary">
-                      💬 {post.commentCount} comments
+                    <Typography variant="h6" fontWeight={600} mb={1}>
+                      {post.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      👍 {post.reactionCount} reactions
+
+                    <Typography variant="body2" color="text.secondary" mb={2}>
+                      {post.content}
                     </Typography>
-                  </Stack>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  </CardContent>
+                </Card>
+              );
+            })
+          ) : (
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              <Typography variant="h6" color="text.secondary">
+                No posts yet. Be the first to post!
+              </Typography>
+            </Box>
+          )}
         </Stack>
       </Container>
     </>

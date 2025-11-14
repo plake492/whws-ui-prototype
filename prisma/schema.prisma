@@ -16,13 +16,28 @@ datasource db {
 }
 
 model Community {
-  id          String   @id @default(uuid())
+  id          String              @id @default(uuid())
   name        String
+  slug        String              @unique
   description String?
+  coverImage  String?
+  tags        String[]            @default([])
   posts       Post[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  members     CommunityMember[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 
+  @@schema("public")
+}
+
+model CommunityMember {
+  id          String    @id @default(uuid())
+  userId      String
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  communityId String
+  joinedAt    DateTime  @default(now())
+
+  @@unique([userId, communityId])
   @@schema("public")
 }
 
@@ -31,7 +46,7 @@ model Post {
   title       String
   content     String
   authorId    String
-  community   Community @relation(fields: [communityId], references: [id])
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
   communityId String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
