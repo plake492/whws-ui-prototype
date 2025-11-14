@@ -1,10 +1,44 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardMedia, Typography, Box, Button, Chip, Stack } from '@mui/material';
 import { People, Forum, TrendingUp } from '@mui/icons-material';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-export default function CommunityCard({ community, variant = 'vertical', isJoined = false }) {
+export default function CommunityCard({ community, variant = 'vertical', onJoinChange }) {
+  const router = useRouter();
+  const [isJoined, setIsJoined] = useState(community.isJoined || false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleJoinToggle = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const method = isJoined ? 'DELETE' : 'POST';
+      const response = await fetch(`/api/communities/${community.id}/join`, {
+        method,
+      });
+
+      if (response.ok) {
+        setIsJoined(!isJoined);
+        if (onJoinChange) {
+          onJoinChange();
+        }
+      } else if (response.status === 401) {
+        // Not authenticated, redirect to login
+        router.push('/login?redirectTo=/communities');
+      } else {
+        const data = await response.json();
+        console.error('Failed to join/leave community:', data.error);
+      }
+    } catch (error) {
+      console.error('Error joining/leaving community:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const stats = [
     { icon: <People fontSize="small" />, label: `${community.memberCount.toLocaleString()} members` },
     { icon: <Forum fontSize="small" />, label: `${community.postCount} discussions` },
@@ -49,16 +83,21 @@ export default function CommunityCard({ community, variant = 'vertical', isJoine
 
           <Box sx={{ p: 2, pt: 0 }}>
             {isJoined ? (
-              <Button component={Link} href={`/communities/${community.slug}`} variant="outlined" fullWidth>
-                View Community
-              </Button>
+              <Stack direction="row" spacing={1}>
+                <Button component={Link} href={`/communities/${community.slug}`} variant="contained" fullWidth>
+                  View Community
+                </Button>
+                <Button onClick={handleJoinToggle} disabled={isLoading} variant="outlined" fullWidth>
+                  {isLoading ? 'Leaving...' : 'Leave'}
+                </Button>
+              </Stack>
             ) : (
               <Stack direction="row" spacing={1}>
                 <Button component={Link} href={`/communities/${community.slug}`} variant="outlined" fullWidth>
                   View
                 </Button>
-                <Button variant="contained" fullWidth>
-                  Join
+                <Button onClick={handleJoinToggle} disabled={isLoading} variant="contained" fullWidth>
+                  {isLoading ? 'Joining...' : 'Join'}
                 </Button>
               </Stack>
             )}
@@ -93,9 +132,14 @@ export default function CommunityCard({ community, variant = 'vertical', isJoine
       </CardContent>
 
       <Box sx={{ p: 2 }}>
-        <Button component={Link} href={`/communities/${community.slug}`} variant="outlined" fullWidth>
-          View Community
-        </Button>
+        <Stack direction="row" spacing={1}>
+          <Button component={Link} href={`/communities/${community.slug}`} variant="outlined" sx={{ flex: 1 }}>
+            View
+          </Button>
+          <Button onClick={handleJoinToggle} disabled={isLoading} variant={isJoined ? 'outlined' : 'contained'} sx={{ flex: 1 }}>
+            {isLoading ? (isJoined ? 'Leaving...' : 'Joining...') : (isJoined ? 'Leave' : 'Join')}
+          </Button>
+        </Stack>
       </Box>
     </Card>
   );
