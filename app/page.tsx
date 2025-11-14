@@ -1,12 +1,10 @@
 'use client';
 
-import React from 'react';
 import CicleIcon from '@/components/CircleIcon';
 import ChatBotMinimal from '@/components/ChatBotMinimal';
 import Header from '@/components/Header';
 import { Box, Typography, Button, Container, Grid, Paper, Stack } from '@mui/material';
 import Image from 'next/image';
-import { Pallet } from '@mui/icons-material';
 import Link from 'next/link';
 
 const data: { icon: 'chat' | 'community' | 'health'; text: string }[] = [

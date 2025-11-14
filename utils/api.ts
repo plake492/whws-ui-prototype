@@ -121,8 +121,12 @@ export interface StreamCallbacks {
 /**
  * Send a chat message to the API
  */
-export async function sendChatMessage(question: string, history?: ChatMessage[]): Promise<ChatResponse> {
-  return apiPost<ChatResponse>('/chat/query/stream', { question, history });
+export async function sendChatMessage(
+  question: string,
+  collection: 'menopause' | 'breast_cancer' = 'menopause',
+  history?: ChatMessage[]
+): Promise<ChatResponse> {
+  return apiPost<ChatResponse>('/chat/query/stream', { question, history, collection });
 }
 
 /**
@@ -131,6 +135,7 @@ export async function sendChatMessage(question: string, history?: ChatMessage[])
 export async function sendChatMessageStream(
   question: string,
   history: ChatMessage[] | undefined,
+  collection: 'menopause' | 'breast_cancer' = 'menopause',
   callbacks: StreamCallbacks
 ): Promise<void> {
   const url = `${API_URL}/chat/query/stream`;
@@ -141,7 +146,7 @@ export async function sendChatMessageStream(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ question, history }),
+      body: JSON.stringify({ question, history, collection }),
     });
 
     if (!response.ok) {

@@ -37,6 +37,7 @@ export default function Header() {
   };
 
   const handleChatNavigate = (category: string) => {
+    if (category === 'Chat') return router.push(`/chat/`);
     router.push(`/chat/${category.toLowerCase().replace(' ', '-')}`);
     handleChatMouseLeave();
   };
@@ -161,7 +162,7 @@ export default function Header() {
                   },
                 }}
               >
-                {CATEGORIES.map((category) => (
+                {['Chat', ...CATEGORIES].map((category) => (
                   <MenuItem
                     key={category}
                     onClick={() => handleChatNavigate(category)}
