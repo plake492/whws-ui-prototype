@@ -72,8 +72,8 @@ export default function Header() {
             <Box onMouseLeave={handleCommunityMouseLeave}>
               <Button
                 onMouseEnter={handleCommunityMouseEnter}
-                onClick={() => router.push('/community')}
-                endIcon={<KeyboardArrowDownIcon />}
+                onClick={() => router.push('/communities')}
+                // endIcon={<KeyboardArrowDownIcon />}
                 sx={({ palette }) => ({
                   color: 'text.primary',
                   textTransform: 'none',
@@ -83,9 +83,9 @@ export default function Header() {
                   },
                 })}
               >
-                Community
+                Communities
               </Button>
-              <Menu
+              {/* <Menu
                 anchorEl={communityAnchorEl}
                 open={isCommunityOpen}
                 onClose={handleCommunityMouseLeave}
@@ -120,7 +120,7 @@ export default function Header() {
                     {category}
                   </MenuItem>
                 ))}
-              </Menu>
+              </Menu> */}
             </Box>
 
             {/* Chat Dropdown */}
@@ -128,7 +128,7 @@ export default function Header() {
               <Button
                 onMouseEnter={handleChatMouseEnter}
                 onClick={() => router.push('/chat')}
-                endIcon={<KeyboardArrowDownIcon />}
+                // endIcon={<KeyboardArrowDownIcon />}
                 sx={({ palette }) => ({
                   color: 'text.primary',
                   textTransform: 'none',
@@ -140,7 +140,7 @@ export default function Header() {
               >
                 Chat
               </Button>
-              <Menu
+              {/* <Menu
                 anchorEl={chatAnchorEl}
                 open={isChatOpen}
                 onClose={handleChatMouseLeave}
@@ -175,7 +175,7 @@ export default function Header() {
                     {category}
                   </MenuItem>
                 ))}
-              </Menu>
+              </Menu> */}
             </Box>
           </Stack>
 
