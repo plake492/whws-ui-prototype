@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Box, Stack, Paper, Typography, Alert, Button } from '@mui/material';
+import { Container, Box, Stack, Paper, Typography, Alert, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import ChatMessages from '@/components/ChatMessages';
 import ChatInput from '@/components/ChatInput';
 import { sendChatMessageStream, ChatMessage as ApiChatMessage, StreamChunk } from '@/utils/api';
+import { collections, makeMachineName } from '@/lib/collections';
+import { CollectionOptions } from '@/types';
 import AddIcon from '@mui/icons-material/Add';
-import { colors } from '@/theme/colors';
 
 export interface Message {
   id: string;
@@ -23,17 +24,28 @@ const INITAL_MESSAGE: Message = {
   timestamp: new Date(),
 };
 
-const SUGGESTED_PROMPTS = [
-  'What are the common symptoms of menopause?',
-  'How can I manage hot flashes?',
-  'What lifestyle changes help with menopause?',
-  'When should I talk to my doctor about menopause?',
-];
+const SUGGESTED_PROMPTS = {
+  menopause: [
+    'What are the common symptoms of menopause?',
+    'How can I manage hot flashes?',
+    'What lifestyle changes help with menopause?',
+    'When should I talk to my doctor about menopause?',
+  ],
+  breast_cancer: [
+    'What are the early signs of breast cancer?',
+    'How often should I get a mammogram?',
+    'What are the risk factors for breast cancer?',
+    'What should I know about breast cancer prevention?',
+  ],
+};
 
 export default function Component() {
   const [messages, setMessages] = useState<Message[]>([INITAL_MESSAGE]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [collectionSelected, setCollectionSelected] = useState<'menopause' | 'breast_cancer'>('menopause');
+  const [pendingCollection, setPendingCollection] = useState<CollectionOptions | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleSendMessage = async (content: string) => {
     const userMessage: Message = {
@@ -67,7 +79,7 @@ export default function Component() {
       }));
 
       // Send message to API with streaming
-      await sendChatMessageStream(content, history, {
+      await sendChatMessageStream(content, history, collectionSelected, {
         onChunk: (chunk: string) => {
           setMessages((prev) =>
             prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, content: msg.content + chunk } : msg))
@@ -139,6 +151,38 @@ export default function Component() {
     }
   };
 
+  const newChat = () => {
+    setMessages([INITAL_MESSAGE]);
+  };
+
+  const handleCollectionClick = (collection: CollectionOptions) => {
+    // If it's the same collection, do nothing
+    if (collection === collectionSelected) return;
+
+    // If there are messages beyond the initial one, show confirmation
+    if (messages.length > 1) {
+      setPendingCollection(collection);
+      setShowConfirmDialog(true);
+    } else {
+      // No messages yet, just switch
+      setCollectionSelected(collection);
+    }
+  };
+
+  const handleConfirmSwitch = () => {
+    if (pendingCollection) {
+      setCollectionSelected(pendingCollection);
+      setMessages([INITAL_MESSAGE]);
+      setPendingCollection(null);
+    }
+    setShowConfirmDialog(false);
+  };
+
+  const handleCancelSwitch = () => {
+    setPendingCollection(null);
+    setShowConfirmDialog(false);
+  };
+
   return (
     <Box
       sx={({ palette }) => ({
@@ -170,8 +214,9 @@ export default function Component() {
           preventScroll
           showPlaceholder
           scrollOnResponse
-          suggestedPrompts={SUGGESTED_PROMPTS}
+          suggestedPrompts={SUGGESTED_PROMPTS[collectionSelected]}
           onPromptClick={handleSendMessage}
+          onRetry={handleSendMessage}
         />
       </Container>
 
@@ -187,7 +232,7 @@ export default function Component() {
             elevation={0}
             sx={({ palette }) => ({
               p: 2,
-              borderRadius: 10,
+              borderRadius: '12px',
               bgcolor: palette.accent.yellow,
               width: '100%',
               mb: 4,
@@ -195,10 +240,45 @@ export default function Component() {
           >
             <Container maxWidth="lg">
               <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+              <Stack flexDirection={'row'} gap={2} mt={2} alignItems={'center'}>
+                {collections.map((collection: string) => (
+                  <Button
+                    key={collection}
+                    sx={({ palette }) => ({
+                      borderRadius: '12px',
+                      borderColor: palette.primary.dark,
+                    })}
+                    variant={collectionSelected === makeMachineName(collection) ? 'contained' : 'outlined'}
+                    className={makeMachineName(collection)}
+                    onClick={() => handleCollectionClick(makeMachineName(collection) as CollectionOptions)}
+                  >
+                    {collection}
+                  </Button>
+                ))}
+                <Button variant="outlined" startIcon={<AddIcon />} sx={{ borderRadius: '12px', ml: 'auto' }} onClick={newChat}>
+                  New Chat
+                </Button>
+              </Stack>
             </Container>
           </Paper>
         </Box>
       </Container>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onClose={handleCancelSwitch}>
+        <DialogTitle>Switch Topic?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Switching topics will clear your current conversation. Are you sure you want to continue?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelSwitch}>Cancel</Button>
+          <Button onClick={handleConfirmSwitch} variant="contained" color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

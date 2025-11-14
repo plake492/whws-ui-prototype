@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
-import { Box, Paper, Typography, Stack, Chip, Collapse, Link } from '@mui/material';
+import { useRef, useEffect, useState } from 'react';
+import { Box, Paper, Typography, Stack, Chip, Collapse, Link, IconButton, Tooltip } from '@mui/material';
 import { Message } from '../app/chat/page';
-import { Pallet } from '@mui/icons-material';
+
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -12,6 +13,7 @@ interface ChatMessagesProps {
   scrollOnResponse?: boolean;
   suggestedPrompts?: string[];
   onPromptClick?: (prompt: string) => void;
+  onRetry?: (messageContent: string) => void;
 }
 
 export default function ChatMessages({
@@ -21,10 +23,51 @@ export default function ChatMessages({
   scrollOnResponse,
   suggestedPrompts,
   onPromptClick,
+  onRetry,
 }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const prevMessagesLengthRef = useRef(messages.length);
+  const [hoveredSourceIndex, setHoveredSourceIndex] = useState<number | null>(null);
+
+  // Function to parse content and replace [n] with clickable links
+  const parseContentWithSources = (content: string, messageId: string, sources?: Message['sources']) => {
+    const parts = content.split(/(\[\d+\])/g);
+
+    return parts.map((part, index) => {
+      const match = part.match(/\[(\d+)\]/);
+      if (match) {
+        const sourceNum = parseInt(match[1]);
+        const sourceIndex = sourceNum - 1;
+        const sourceUrl = sources?.[sourceIndex]?.metadata?.source;
+
+        return (
+          <Box
+            key={`${messageId}-${index}`}
+            component="a"
+            href={typeof sourceUrl === 'string' ? sourceUrl : `#source-${messageId}-${sourceNum}`}
+            target={typeof sourceUrl === 'string' ? '_blank' : undefined}
+            rel={typeof sourceUrl === 'string' ? 'noopener noreferrer' : undefined}
+            onMouseEnter={() => setHoveredSourceIndex(sourceIndex)}
+            onMouseLeave={() => setHoveredSourceIndex(null)}
+            sx={{
+              display: 'inline',
+              color: 'primary.main',
+              textDecoration: 'none',
+              fontWeight: 600,
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {part}
+          </Box>
+        );
+      }
+      return part;
+    });
+  };
 
   const scrollToBottom = () => {
     if (!preventScroll) messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -123,8 +166,13 @@ export default function ChatMessages({
           )}
         </Box>
       ) : (
-        messages.map((message) => {
+        messages.map((message, index) => {
           const isUser = message.role === 'user';
+          // Find the last user message before this message for retry
+          const lastUserMessage = messages
+            .slice(0, index + 1)
+            .reverse()
+            .find((m) => m.role === 'user');
 
           return (
             <Box
@@ -132,7 +180,9 @@ export default function ChatMessages({
               sx={{
                 display: 'flex',
                 justifyContent: isUser ? 'flex-end' : 'flex-start',
+                alignItems: 'flex-start',
                 width: '100%',
+                gap: 1,
               }}
             >
               <Paper
@@ -149,22 +199,53 @@ export default function ChatMessages({
                 })}
               >
                 <Stack spacing={1} display={isUser ? 'flex' : 'block'}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontWeight: 600,
-                      textTransform: 'uppercase',
-                      opacity: 0.8,
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    {isUser ? 'You' : 'Assistant'}
-                    {message.isStreaming && (
-                      <Chip label="Typing..." size="small" sx={{ ml: 1, height: 20, fontSize: '0.7rem' }} />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        opacity: 0.8,
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      {isUser ? 'You' : 'Assistant'}
+                      {message.isStreaming && (
+                        <Chip label="Typing..." size="small" sx={{ ml: 1, height: 20, fontSize: '0.7rem' }} />
+                      )}
+                    </Typography>
+                    {/* Try Again Button for Assistant */}
+                    {!isUser && onRetry && lastUserMessage && !message.isStreaming && (
+                      <Tooltip title="Try again">
+                        <IconButton
+                          size="small"
+                          onClick={() => onRetry(lastUserMessage.content)}
+                          sx={{
+                            padding: '6px 12px',
+                            borderRadius: '20px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            backdropFilter: 'blur(10px)',
+                            WebkitBackdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                            opacity: 0.7,
+                            '&:hover': {
+                              opacity: 1,
+                              background: 'rgba(255, 255, 255, 0.15)',
+                            },
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          <RefreshIcon sx={{ fontSize: '0.9rem' }} />
+                        </IconButton>
+                      </Tooltip>
                     )}
-                  </Typography>
+                  </Box>
                   <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-                    {message.content || (message.isStreaming ? '' : 'No response')}
+                    {message.content
+                      ? parseContentWithSources(message.content, message.id, message.sources)
+                      : message.isStreaming
+                        ? ''
+                        : 'No response'}
                     {message.isStreaming && !message.content && (
                       <Box component="span" sx={{ animation: 'blink 1.5s infinite' }}>
                         ▋
@@ -190,12 +271,17 @@ export default function ChatMessages({
                       <Stack spacing={1}>
                         {message.sources.map((source, idx) => (
                           <Paper
+                            id={`source-${message.id}-${idx + 1}`}
                             key={idx}
                             elevation={0}
                             sx={{
                               p: 1.5,
                               bgcolor: isUser ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.05)',
                               borderRadius: 1,
+                              transition: 'all 0.2s ease',
+                              border: hoveredSourceIndex === idx ? '2px solid' : '2px solid transparent',
+                              borderColor: hoveredSourceIndex === idx ? 'primary.main' : 'transparent',
+                              transform: hoveredSourceIndex === idx ? 'scale(1.02)' : 'scale(1)',
                             }}
                           >
                             <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
@@ -248,6 +334,23 @@ export default function ChatMessages({
                   </Typography>
                 </Stack>
               </Paper>
+              {/* Try Again Button for User Messages Only */}
+              {isUser && onRetry && lastUserMessage && !message.isStreaming && (
+                <Tooltip title="Try again">
+                  <IconButton
+                    size="small"
+                    onClick={() => onRetry(lastUserMessage.content)}
+                    sx={{
+                      opacity: 0.6,
+                      '&:hover': {
+                        opacity: 1,
+                      },
+                    }}
+                  >
+                    <RefreshIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Box>
           );
         })
