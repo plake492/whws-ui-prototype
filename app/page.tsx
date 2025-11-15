@@ -3,9 +3,11 @@
 import CicleIcon from '@/components/CircleIcon';
 import ChatBotMinimal from '@/components/ChatBotMinimal';
 import Header from '@/components/Header';
+import SponsorCarousel from '@/components/sponsors/SponsorCarousel';
 import { Box, Typography, Button, Container, Grid, Paper, Stack } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
+import { getFeaturedSponsors } from '@/lib/dummySponsors';
 
 const data: { icon: 'chat' | 'community' | 'health'; text: string }[] = [
   { icon: 'chat', text: 'Knowledge' },
@@ -115,15 +117,23 @@ export default function App() {
           ))}
         </Grid>
       </Container>
-      <Box
-        sx={({ palette }) => ({
-          backgroundColor: palette.accent.yellow,
-          height: '400px',
-          display: 'grid',
-          placeContent: 'center',
-        })}
-      >
-        <Typography variant="h1">THIS IS A BLOCK</Typography>
+      {/* Sponsor Carousel */}
+      <Box sx={{ mb: 8, bgcolor: 'grey.50', py: 6 }}>
+        <Container maxWidth="lg" sx={{ mb: 1, textAlign: 'center' }}>
+          <Typography variant="h2" gutterBottom>
+            Our Sponsors
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3, maxWidth: '800px', mx: 'auto' }}>
+            Trusted partners supporting women's health and wellness. Explore exclusive offers, discounts, and resources
+            tailored for you.
+          </Typography>
+        </Container>
+        <SponsorCarousel sponsors={getFeaturedSponsors()} />
+        <Container maxWidth="lg" sx={{ mt: 3, textAlign: 'center' }}>
+          <Button variant="outlined" component={Link} href="/sponsors">
+            View All Sponsors
+          </Button>
+        </Container>
       </Box>
 
       <ChatBotMinimal />
