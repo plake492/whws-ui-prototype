@@ -15,6 +15,31 @@ datasource db {
   schemas           = ["public"]
 }
 
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+
+  // NEW: Consent & Privacy Flags
+  aiLearningConsent    Boolean  @default(false)  // Consent to use data for AI training
+  showInChannelOnly    Boolean  @default(false)  // Only show activity in channel, not feeds
+
+  // Existing fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Existing relations
+  posts       Post[]
+
+  // NEW: Comment relations
+  comments    Comment[]
+  commentHearts CommentHeart[]
+
+  @@map("users")
+  @@schema("public")
+}
+
 model Community {
   id          String              @id @default(uuid())
   name        String
@@ -45,12 +70,78 @@ model Post {
   id          String    @id @default(uuid())
   title       String
   content     String
+  author      User      @relation(fields: [authorId], references: [id])
   authorId    String
   community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
   communityId String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  // NEW: Comments relation
+  comments  Comment[]
+  commentCount Int @default(0) // Denormalized for performance
+
+  @@schema("public")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+
+  // Content
+  content   String   @db.Text
+
+  // Relations
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Nesting (one level)
+  parentId  String?  // null = top-level comment
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+
+  // Engagement
+  hearts    CommentHeart[]
+  heartCount Int     @default(0) // Denormalized for performance
+
+  // Moderation
+  isEdited  Boolean  @default(false)
+  editedAt  DateTime?
+  isDeleted Boolean  @default(false)
+  deletedAt DateTime?
+
+  // Meta
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([postId, createdAt])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([postId, parentId]) // For fetching top-level comments
+  @@map("comments")
+  @@schema("public")
+}
+
+model CommentHeart {
+  id        String   @id @default(uuid())
+
+  // Relations
+  commentId String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Meta
+  createdAt DateTime @default(now())
+
+  // Prevent duplicate hearts from same user
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+  @@map("comment_hearts")
   @@schema("public")
 }
 

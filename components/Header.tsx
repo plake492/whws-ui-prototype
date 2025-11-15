@@ -22,7 +22,7 @@ const CATEGORIES = ['Menopause', 'Breast Cancer'];
 
 export default function Header() {
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const [communityAnchorEl, setCommunityAnchorEl] = useState<null | HTMLElement>(null);
   const [chatAnchorEl, setChatAnchorEl] = useState<null | HTMLElement>(null);
   const [userMenuAnchorEl, setUserMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -195,7 +195,9 @@ export default function Header() {
           </Stack>
 
           {/* Auth Buttons / User Menu */}
-          {user ? (
+          {loading ? (
+            <Box sx={{ width: 160 }} />
+          ) : user ? (
             <>
               <IconButton onClick={(e) => setUserMenuAnchorEl(e.currentTarget)}>
                 <Avatar
