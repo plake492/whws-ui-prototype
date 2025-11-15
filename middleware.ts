@@ -1,8 +1,14 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { protectedRoutes } from '@/lib/protectedRoutes';
 
 export async function middleware(req: NextRequest) {
+  // Skip middleware for API routes
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({
     request: {
       headers: req.headers,
@@ -29,7 +35,6 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/communities', '/chat', '/profile', '/settings'];
   const isProtectedRoute = protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route));
 
   // If accessing a protected route without a session, redirect to login
@@ -51,5 +56,14 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/communities/:path*', '/chat/:path*', '/profile/:path*', '/settings/:path*', '/login', '/signup'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 };

@@ -21,6 +21,9 @@ export default function CommunityCard({ community, variant = 'vertical', onJoinC
         method,
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers.get('content-type'));
+
       if (response.ok) {
         setIsJoined(!isJoined);
         if (onJoinChange) {
@@ -30,8 +33,15 @@ export default function CommunityCard({ community, variant = 'vertical', onJoinC
         // Not authenticated, redirect to login
         router.push('/login?redirectTo=/communities');
       } else {
-        const data = await response.json();
-        console.error('Failed to join/leave community:', data.error);
+        const text = await response.text();
+        console.error('Failed to join/leave community. Status:', response.status);
+        console.error('Response text:', text);
+        try {
+          const data = JSON.parse(text);
+          console.error('Error data:', data.error);
+        } catch (e) {
+          console.error('Could not parse response as JSON');
+        }
       }
     } catch (error) {
       console.error('Error joining/leaving community:', error);
@@ -136,8 +146,13 @@ export default function CommunityCard({ community, variant = 'vertical', onJoinC
           <Button component={Link} href={`/communities/${community.slug}`} variant="outlined" sx={{ flex: 1 }}>
             View
           </Button>
-          <Button onClick={handleJoinToggle} disabled={isLoading} variant={isJoined ? 'outlined' : 'contained'} sx={{ flex: 1 }}>
-            {isLoading ? (isJoined ? 'Leaving...' : 'Joining...') : (isJoined ? 'Leave' : 'Join')}
+          <Button
+            onClick={handleJoinToggle}
+            disabled={isLoading}
+            variant={isJoined ? 'outlined' : 'contained'}
+            sx={{ flex: 1 }}
+          >
+            {isLoading ? (isJoined ? 'Leaving...' : 'Joining...') : isJoined ? 'Leave' : 'Join'}
           </Button>
         </Stack>
       </Box>

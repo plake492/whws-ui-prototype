@@ -3,12 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = await params;
+    const { id } = await context.params;
     const cookieStore = await cookies();
 
     const supabase = createServerClient(
@@ -20,24 +17,21 @@ export async function GET(
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
+            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
           },
         },
       }
     );
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     const userId = session?.user?.id;
 
     // Try to find by ID or slug
     const community = await prisma.community.findFirst({
       where: {
-        OR: [
-          { id },
-          { slug: id },
-        ],
+        OR: [{ id }, { slug: id }],
       },
       include: {
         _count: {
@@ -46,11 +40,13 @@ export async function GET(
             posts: true,
           },
         },
-        members: userId ? {
-          where: {
-            userId: userId,
-          },
-        } : false,
+        members: userId
+          ? {
+              where: {
+                userId: userId,
+              },
+            }
+          : false,
         posts: {
           take: 10,
           orderBy: {
@@ -61,10 +57,7 @@ export async function GET(
     });
 
     if (!community) {
-      return NextResponse.json(
-        { error: 'Community not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Community not found' }, { status: 404 });
     }
 
     const transformedCommunity = {
@@ -83,9 +76,6 @@ export async function GET(
     return NextResponse.json(transformedCommunity);
   } catch (error) {
     console.error('Error fetching community:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch community' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch community' }, { status: 500 });
   }
 }

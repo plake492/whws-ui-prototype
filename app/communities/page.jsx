@@ -5,7 +5,7 @@ import { Search } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import CommunityCard from '@/components/CommunityCard';
 import PostCard from '@/components/PostCard';
-import { dummyPosts } from '@/lib/dummyData';
+import { dummyPosts, getUserById } from '@/lib/dummyData';
 import Header from '@/components/Header';
 
 export default function CommunitiesPage() {
@@ -44,14 +44,14 @@ export default function CommunitiesPage() {
 
   return (
     <Box
-      sx={({ palette }) => ({
-        bgcolor: palette.accent.yellow,
-      })}
+      sx={{
+        bgcolor: 'rgb(253, 206, 99)',
+      }}
     >
       <Header />
       {/* <Container maxWidth="lg" sx={{ py: 4 }}> */}
       {/* Hero Section */}
-      <Box sx={({ palette }) => ({ textAlign: 'center', mb: 6, bgcolor: palette.background.paper })}>
+      <Box sx={{ textAlign: 'center', mb: 6, bgcolor: '#ffffff' }}>
         <Container maxWidth="lg" sx={{ py: 8 }}>
           <Typography variant="h2" sx={{ mb: 2, fontWeight: 700 }}>
             Welcome to the Community Hub
@@ -139,7 +139,7 @@ export default function CommunitiesPage() {
           </Typography>
           <Stack spacing={2}>
             {dummyPosts.slice(0, 5).map((post) => (
-              <PostCard key={post.id} post={post} />
+              <PostCard key={post.id} post={post} author={getUserById(post.authorId)} />
             ))}
           </Stack>
         </Container>

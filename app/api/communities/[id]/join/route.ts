@@ -3,12 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id: communityId } = await params;
+    const { id: communityId } = await context.params;
     const cookieStore = await cookies();
 
     const supabase = createServerClient(
@@ -20,21 +17,18 @@ export async function POST(
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
+            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
           },
         },
       }
     );
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const userId = session.user.id;
@@ -45,10 +39,7 @@ export async function POST(
     });
 
     if (!community) {
-      return NextResponse.json(
-        { error: 'Community not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Community not found' }, { status: 404 });
     }
 
     // Check if already a member
@@ -62,10 +53,7 @@ export async function POST(
     });
 
     if (existingMember) {
-      return NextResponse.json(
-        { error: 'Already a member' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Already a member' }, { status: 400 });
     }
 
     // Create membership
@@ -79,19 +67,13 @@ export async function POST(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error joining community:', error);
-    return NextResponse.json(
-      { error: 'Failed to join community' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to join community' }, { status: 500 });
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id: communityId } = await params;
+    const { id: communityId } = await context.params;
     const cookieStore = await cookies();
 
     const supabase = createServerClient(
@@ -103,21 +85,18 @@ export async function DELETE(
             return cookieStore.getAll();
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
+            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
           },
         },
       }
     );
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (!session) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const userId = session.user.id;
@@ -135,9 +114,6 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error leaving community:', error);
-    return NextResponse.json(
-      { error: 'Failed to leave community' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to leave community' }, { status: 500 });
   }
 }
