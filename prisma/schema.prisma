@@ -53,3 +53,99 @@ model Post {
 
   @@schema("public")
 }
+
+model Sponsor {
+  id           String   @id @default(uuid())
+  name         String
+  slug         String   @unique
+  logoUrl      String
+  heroImageUrl String?
+  description  Json
+  shortBio     String   @db.VarChar(200)
+  category     String
+  healthFocus  String[]
+  isFeatured   Boolean  @default(false)
+  displayOrder Int      @default(0)
+  website      String?
+  phone        String?
+  email        String?
+  address      String?
+  facebook     String?
+  instagram    String?
+  twitter      String?
+  linkedin     String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  offers       Offer[]
+
+  @@index([slug])
+  @@index([category])
+  @@index([isFeatured, displayOrder])
+  @@schema("public")
+}
+
+model Offer {
+  id                 String              @id @default(uuid())
+  sponsorId          String
+  sponsor            Sponsor             @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
+  title              String
+  description        String              @db.Text
+  discountDetails    String
+  termsConditions    String              @db.Text
+  qrCodeData         String?             @db.Text
+  qrCodeImage        String?             @db.Text
+  validFrom          DateTime            @default(now())
+  validUntil         DateTime?
+  totalLimit         Int?
+  perUserLimit       Int                 @default(1)
+  currentRedemptions Int                 @default(0)
+  imageUrl           String?
+  isActive           Boolean             @default(true)
+  isFeatured         Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  redemptions        OfferRedemption[]
+  savedBy            UserSavedOffer[]
+
+  @@index([sponsorId])
+  @@index([validFrom, validUntil])
+  @@index([isActive, isFeatured])
+  @@schema("public")
+}
+
+model OfferRedemption {
+  id               String    @id @default(uuid())
+  offerId          String
+  offer            Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  userId           String
+  redeemedAt       DateTime  @default(now())
+  qrCodeData       String?   @db.Text
+  redemptionMethod String    @default("qr_code")
+  isVerified       Boolean   @default(false)
+  verifiedBy       String?
+  verifiedAt       DateTime?
+  latitude         Float?
+  longitude        Float?
+  ipAddress        String?
+  notes            String?   @db.Text
+
+  @@unique([offerId, userId])
+  @@index([offerId])
+  @@index([userId])
+  @@index([redeemedAt])
+  @@schema("public")
+}
+
+model UserSavedOffer {
+  id      String   @id @default(uuid())
+  userId  String
+  offerId String
+  offer   Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  savedAt DateTime @default(now())
+
+  @@unique([userId, offerId])
+  @@index([userId])
+  @@index([offerId])
+  @@schema("public")
+}

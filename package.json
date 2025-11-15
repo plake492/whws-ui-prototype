@@ -22,7 +22,13 @@
     "@prisma/client": "^6.19.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.81.1",
+    "@tiptap/extension-image": "^3.10.7",
+    "@tiptap/extension-link": "^3.10.7",
+    "@tiptap/react": "^3.10.7",
+    "@tiptap/starter-kit": "^3.10.7",
+    "@types/qrcode": "^1.5.6",
     "next": "16.0.1",
+    "qrcode": "^1.5.4",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
