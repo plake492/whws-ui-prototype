@@ -1,9 +1,13 @@
 /**
  * API Utility Functions
- * Handles requests to the external API server
+ * Handles requests to both internal and external API servers
  */
 
+// Internal API URL for communities, sponsors, comments, etc.
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+
+// External Chat API URL for chat-related requests
+const CHAT_API_URL = process.env.NEXT_PUBLIC_CHAT_API_URL || 'http://localhost:3000';
 
 export interface ApiError {
   message: string;
@@ -119,18 +123,49 @@ export interface StreamCallbacks {
 }
 
 /**
- * Send a chat message to the API
+ * Send a chat message to the external chat API
  */
 export async function sendChatMessage(
   question: string,
   collection: 'menopause' | 'breast_cancer' = 'menopause',
   history?: ChatMessage[]
 ): Promise<ChatResponse> {
-  return apiPost<ChatResponse>('/chat/query/stream', { question, history, collection });
+  const url = `${CHAT_API_URL}/chat/query/stream`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ question, history, collection }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({
+        message: 'An error occurred',
+      }));
+      throw {
+        message: errorData.message || `HTTP error! status: ${response.status}`,
+        status: response.status,
+        error: errorData,
+      } as ApiError;
+    }
+
+    return await response.json();
+  } catch (error) {
+    if ((error as ApiError).status) {
+      throw error;
+    }
+    throw {
+      message: 'Network error or chat server unavailable',
+      error,
+    } as ApiError;
+  }
 }
 
 /**
- * Send a chat message with streaming response
+ * Send a chat message with streaming response to the external chat API
  */
 export async function sendChatMessageStream(
   question: string,
@@ -138,7 +173,7 @@ export async function sendChatMessageStream(
   collection: 'menopause' | 'breast_cancer' = 'menopause',
   callbacks: StreamCallbacks
 ): Promise<void> {
-  const url = `${API_URL}/chat/query/stream`;
+  const url = `${CHAT_API_URL}/chat/query/stream`;
 
   try {
     const response = await fetch(url, {
