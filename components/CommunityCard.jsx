@@ -50,7 +50,7 @@ export default function CommunityCard({ community, variant = 'vertical', onJoinC
     }
   };
   const stats = [
-    { icon: <People fontSize="small" />, label: `${community.memberCount.toLocaleString()} members` },
+    { icon: <People fontSize="small" />, label: `${community.memberCount} members` },
     { icon: <Forum fontSize="small" />, label: `${community.postCount} discussions` },
   ];
 

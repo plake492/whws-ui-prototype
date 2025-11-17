@@ -16,6 +16,23 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  // Proxy API requests to external API
+  async rewrites() {
+    const externalApiUrl = process.env.EXTERNAL_API_URL;
+
+    if (!externalApiUrl) {
+      console.warn('EXTERNAL_API_URL not set - API requests may not work correctly');
+      return [];
+    }
+
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${externalApiUrl}/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
