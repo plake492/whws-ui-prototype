@@ -1,5 +1,6 @@
 export function formatTimeAgo(date) {
-  const seconds = Math.floor((new Date() - date) / 1000);
+  const dateObj = date instanceof Date ? date : new Date(date);
+  const seconds = Math.floor((new Date() - dateObj) / 1000);
 
   if (seconds < 60) return 'just now';
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
@@ -7,5 +8,5 @@ export function formatTimeAgo(date) {
   if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
   if (seconds < 2592000) return `${Math.floor(seconds / 604800)}w ago`;
 
-  return date.toLocaleDateString();
+  return dateObj.toLocaleDateString();
 }
