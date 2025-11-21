@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Container,
   Box,
@@ -22,6 +23,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { collections, makeMachineName, makeReadableName } from '@/lib/collections';
 import { CollectionOptions } from '@/types';
 import Link from 'next/link';
+import { Analytics } from '@/lib/analytics';
+import { usePageTracking } from '@/hooks/usePageTracking';
+import { useScrollTracking } from '@/hooks/useScrollTracking';
 
 export interface Message {
   id: string;
@@ -39,14 +43,26 @@ const INITAL_MESSAGE: Message = {
 };
 
 export default function Component() {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([INITAL_MESSAGE]);
+  const [hasStartedChat, setHasStartedChat] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [collectionSelected, setCollectionSelected] = useState<'menopause' | 'breast_cancer'>('menopause');
   const [pendingCollection, setPendingCollection] = useState<CollectionOptions | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
+  usePageTracking(user?.id, collectionSelected);
+  useScrollTracking(user?.id, collectionSelected);
+
   const handleSendMessage = async (content: string) => {
+    if (!hasStartedChat) {
+      Analytics.trackChatStart(user?.id, collectionSelected);
+      setHasStartedChat(true);
+    }
+
+    Analytics.trackChatMessage(user?.id, collectionSelected, content.length);
+
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -164,12 +180,14 @@ export default function Component() {
       setShowConfirmDialog(true);
     } else {
       // No messages yet, just switch
+      Analytics.trackTopicSwitch(user?.id, collectionSelected, collection);
       setCollectionSelected(collection);
     }
   };
 
   const handleConfirmSwitch = () => {
     if (pendingCollection) {
+      Analytics.trackTopicSwitch(user?.id, collectionSelected, pendingCollection);
       setCollectionSelected(pendingCollection);
       setMessages([INITAL_MESSAGE]);
       setPendingCollection(null);

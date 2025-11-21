@@ -4,6 +4,7 @@ import './globals.css';
 import ThemeRegistry from '@/components/ThemeRegistry';
 import Footer from '@/components/Footer';
 import { AuthProvider } from '@/contexts/AuthContext';
+import AnalyticsWrapper from '@/components/AnalyticsWrapper';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -20,16 +21,14 @@ export const metadata: Metadata = {
   description: "Supporting women's health and wellness through community, resources, and expert guidance",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
-          <ThemeRegistry>{children}</ThemeRegistry>
+          <ThemeRegistry>
+            <AnalyticsWrapper>{children}</AnalyticsWrapper>
+          </ThemeRegistry>
           <Footer />
         </AuthProvider>
       </body>
