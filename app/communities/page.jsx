@@ -1,6 +1,17 @@
 'use client';
 
-import { Container, Typography, Grid, Box, TextField, InputAdornment, Tabs, Tab, Stack, CircularProgress } from '@mui/material';
+import {
+  Container,
+  Typography,
+  Grid,
+  Box,
+  TextField,
+  InputAdornment,
+  Tabs,
+  Tab,
+  Stack,
+  CircularProgress,
+} from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 import CommunityCard from '@/components/CommunityCard';
@@ -43,11 +54,7 @@ export default function CommunitiesPage() {
   const discoverCommunities = filteredCommunities;
 
   return (
-    <Box
-      sx={{
-        bgcolor: 'rgb(253, 206, 99)',
-      }}
-    >
+    <Box sx={{ bgcolor: 'rgb(253, 206, 99)' }}>
       <Header />
       {/* <Container maxWidth="lg" sx={{ py: 4 }}> */}
       {/* Hero Section */}
@@ -123,7 +130,12 @@ export default function CommunitiesPage() {
             <Grid container spacing={3}>
               {discoverCommunities.map((community) => (
                 <Grid item key={community.id} size={12}>
-                  <CommunityCard key={community.id} community={community} variant="horizontal" onJoinChange={fetchCommunities} />
+                  <CommunityCard
+                    key={community.id}
+                    community={community}
+                    variant="horizontal"
+                    onJoinChange={fetchCommunities}
+                  />
                 </Grid>
               ))}
             </Grid>

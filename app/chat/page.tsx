@@ -22,6 +22,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { collections, makeMachineName, makeReadableName } from '@/lib/collections';
 import { CollectionOptions } from '@/types';
 import Link from 'next/link';
+import { Analytics } from '@/lib/analytics';
 
 export interface Message {
   id: string;
