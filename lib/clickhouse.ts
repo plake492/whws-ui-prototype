@@ -39,7 +39,7 @@ class ClickHouseClient {
   private async initClient() {
     try {
       this.client = createClient({
-        host: process.env.CLICKHOUSE_HOST!,
+        url: process.env.CLICKHOUSE_HOST!,
         username: process.env.CLICKHOUSE_USER || 'default',
         password: process.env.CLICKHOUSE_PASSWORD!,
         database: process.env.CLICKHOUSE_DATABASE || 'whws_rag',

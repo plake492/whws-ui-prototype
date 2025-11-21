@@ -7,4 +7,5 @@ export interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
   signOut: () => Promise<{ error: any }>;
   resetPassword: (email: string) => Promise<{ data: any; error: any }>;
+  getUserState: () => { user: import('@supabase/supabase-js').User | null; loading: boolean };
 }

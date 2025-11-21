@@ -76,10 +76,10 @@ export class Analytics {
   /**
    * Track chat start
    */
-  static trackChatStart(userId: string, collection: string): void {
+  static trackChatStart(userId: string | undefined, collection: string): void {
     this.trackEvent({
       eventType: 'chat_start',
-      userId,
+      userId: userId || null,
       collection,
       featureName: 'chat_interface',
     });
@@ -88,7 +88,7 @@ export class Analytics {
   /**
    * Track chat message sent
    */
-  static trackChatMessage(userId: string, collection: string, messageLength: number): void {
+  static trackChatMessage(userId: string | undefined, collection: string, messageLength: number): void {
     this.trackEvent({
       eventType: 'chat_message_sent',
       userId,
@@ -100,7 +100,7 @@ export class Analytics {
   /**
    * Track topic switch
    */
-  static trackTopicSwitch(userId: string, fromCollection: string, toCollection: string): void {
+  static trackTopicSwitch(userId: string | undefined, fromCollection: string, toCollection: string): void {
     this.trackEvent({
       eventType: 'topic_switch',
       userId,
@@ -113,7 +113,7 @@ export class Analytics {
   /**
    * Track sponsor offer click
    */
-  static trackSponsorClick(userId: string | null, sponsorId: string, offerId: string): void {
+  static trackSponsorClick(userId: string | undefined, sponsorId: string, offerId: string): void {
     this.trackEvent({
       eventType: 'sponsor_click',
       userId,
@@ -126,7 +126,7 @@ export class Analytics {
   /**
    * Track QR code scan
    */
-  static trackQRScan(userId: string | null, sponsorId: string, offerId: string): void {
+  static trackQRScan(userId: string | undefined, sponsorId: string, offerId: string): void {
     this.trackEvent({
       eventType: 'qr_scan',
       userId,
@@ -139,7 +139,7 @@ export class Analytics {
   /**
    * Track source expansion (when user clicks to see full source)
    */
-  static trackSourceExpand(userId: string, collection: string, sourceId: string): void {
+  static trackSourceExpand(userId: string | undefined, collection: string, sourceId: string): void {
     this.trackEvent({
       eventType: 'source_expand',
       userId,
@@ -153,7 +153,7 @@ export class Analytics {
    * Track user feedback (thumbs up/down)
    */
   static trackFeedback(
-    userId: string,
+    userId: string | undefined,
     collection: string,
     messageId: string,
     feedbackType: 'positive' | 'negative'
@@ -170,7 +170,7 @@ export class Analytics {
   /**
    * Track newsletter signup
    */
-  static trackNewsletterSignup(userId: string, email: string): void {
+  static trackNewsletterSignup(userId: string | undefined, email: string): void {
     this.trackEvent({
       eventType: 'newsletter_signup',
       userId,
@@ -182,7 +182,7 @@ export class Analytics {
   /**
    * Track time on page (call on beforeunload or route change)
    */
-  static trackTimeOnPage(userId: string | null, collection: string | null, seconds: number): void {
+  static trackTimeOnPage(userId: string | undefined, collection: string | null, seconds: number): void {
     this.trackEvent({
       eventType: 'time_on_page',
       userId,
@@ -194,7 +194,7 @@ export class Analytics {
   /**
    * Track scroll depth (percentage of page scrolled)
    */
-  static trackScrollDepth(userId: string | null, collection: string | null, depthPercent: number): void {
+  static trackScrollDepth(userId: string | undefined, collection: string | null, depthPercent: number): void {
     this.trackEvent({
       eventType: 'scroll_depth',
       userId,
