@@ -28,11 +28,12 @@ interface UserAnalyticsEvent {
 class ClickHouseClient {
   private client: ClickHouseClientType | null = null;
   private isConnected: boolean = false;
+  private initPromise: Promise<void> | null = null;
 
   constructor() {
     // Only initialize on server-side
     if (typeof window === 'undefined') {
-      this.initClient();
+      this.initPromise = this.initClient();
     }
   }
 
@@ -57,7 +58,15 @@ class ClickHouseClient {
     }
   }
 
+  private async ensureConnected(): Promise<void> {
+    if (this.initPromise) {
+      await this.initPromise;
+    }
+  }
+
   async logUserEvent(event: UserAnalyticsEvent): Promise<void> {
+    await this.ensureConnected();
+
     if (!this.isConnected || !this.client) {
       return;
     }
@@ -74,6 +83,8 @@ class ClickHouseClient {
   }
 
   async query<T = any>(sql: string): Promise<T[]> {
+    await this.ensureConnected();
+
     if (!this.isConnected || !this.client) {
       throw new Error('ClickHouse not connected');
     }
