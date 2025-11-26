@@ -15,7 +15,7 @@ export default function DashboardNav() {
   ];
 
   return (
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-white shadow-sm p-16">
       <div className="max-w-7xl mx-auto px-8">
         <div className="flex space-x-8">
           {links.map((link) => (

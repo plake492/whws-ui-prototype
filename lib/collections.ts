@@ -1,4 +1,4 @@
-export const collections = ['Menopause', 'Breast Cancer'];
+export const collections = ['Menopause', 'Breast Cancer', 'Pcos'];
 
 export const makeMachineName = (v: string) => {
   return v

@@ -26,10 +26,15 @@ export default function RAGDashboard() {
       if (collection) params.append('collection', collection);
 
       const response = await fetch(`/api/analytics/rag?${params}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const result = await response.json();
+      console.log('RAG Analytics data:', result);
       setData(result);
     } catch (error) {
-      console.error('Failed to fetch analytics:', error);
+      console.error('Failed to fetch RAG analytics:', error);
+      setData(null);
     } finally {
       setLoading(false);
     }
@@ -117,12 +122,14 @@ export default function RAGDashboard() {
         <div className="mb-8">
           <LineChart
             title="Performance Over Time"
-            data={data?.performance?.map((p: any) => ({
-              time: format(new Date(p.hour), 'MM/dd HH:mm'),
-              requests: p.requests,
-              avg_time: p.avg_time,
-              p95_time: p.p95_time,
-            }))}
+            data={
+              data?.performance?.map((p: any) => ({
+                time: format(new Date(p.hour), 'MM/dd HH:mm'),
+                requests: p.requests,
+                avg_time: p.avg_time,
+                p95_time: p.p95_time,
+              })) || []
+            }
             xKey="time"
             yKeys={[
               { key: 'avg_time', name: 'Avg Time (ms)', color: '#8884d8' },
@@ -136,14 +143,14 @@ export default function RAGDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           <BarChart
             title="Requests by Collection"
-            data={data?.collections}
+            data={data?.collections || []}
             xKey="collection"
             yKeys={[{ key: 'requests', name: 'Requests', color: '#0088FE' }]}
           />
 
           <BarChart
             title="Cost by Collection"
-            data={data?.collections}
+            data={data?.collections || []}
             xKey="collection"
             yKeys={[{ key: 'total_cost', name: 'Cost ($)', color: '#00C49F' }]}
           />
@@ -153,7 +160,7 @@ export default function RAGDashboard() {
         <div className="mb-8">
           <BarChart
             title="Pipeline Timing Breakdown (ms)"
-            data={data?.pipeline}
+            data={data?.pipeline || []}
             xKey="collection"
             yKeys={[
               { key: 'embedding', name: 'Embedding', color: '#8884d8' },
@@ -175,7 +182,7 @@ export default function RAGDashboard() {
               { key: 'avg_sources', label: 'Avg Sources', format: (v) => v?.toFixed(1) || 'N/A' },
               { key: 'answer_rate', label: 'Answer Rate', format: (v) => `${v || 0}%` },
             ]}
-            data={data?.quality}
+            data={data?.quality || []}
           />
         </div>
 
@@ -183,11 +190,13 @@ export default function RAGDashboard() {
         <div className="mb-8">
           <LineChart
             title="Daily Costs"
-            data={data?.costs?.map((c: any) => ({
-              date: format(new Date(c.date), 'MM/dd'),
-              cost: c.cost,
-              requests: c.requests,
-            }))}
+            data={
+              data?.costs?.map((c: any) => ({
+                date: format(new Date(c.date), 'MM/dd'),
+                cost: c.cost,
+                requests: c.requests,
+              })) || []
+            }
             xKey="date"
             yKeys={[{ key: 'cost', name: 'Cost ($)', color: '#00C49F' }]}
           />
