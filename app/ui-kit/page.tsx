@@ -19,7 +19,14 @@ import { styled } from '@mui/material/styles';
 
 // ==================== THEME SETUP ====================
 
-const ThemeContext = createContext();
+type ThemeChoice = 'plumGold' | 'sageNavy';
+
+interface ThemeContextType {
+  currentTheme: ThemeChoice;
+  setCurrentTheme: (theme: ThemeChoice) => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const palettes = {
   plumGold: {
@@ -55,7 +62,7 @@ const palettes = {
       main: '#7A9B8E',
       light: '#A8C5B9',
       dark: '#6a8a7d',
-      contrastText: '#fff',
+      contrastText: '#1f2f3a',
     },
     background: {
       default: '#F7F9F8',
@@ -68,7 +75,7 @@ const palettes = {
   },
 };
 
-const createAppTheme = (paletteChoice) => {
+const createAppTheme = (paletteChoice: ThemeChoice) => {
   const palette = palettes[paletteChoice];
 
   return createTheme({
@@ -137,8 +144,8 @@ const createAppTheme = (paletteChoice) => {
   });
 };
 
-const AppThemeProvider = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState('plumGold');
+const AppThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const [currentTheme, setCurrentTheme] = useState<ThemeChoice>('plumGold');
   const theme = createAppTheme(currentTheme);
 
   return (
@@ -151,7 +158,13 @@ const AppThemeProvider = ({ children }) => {
   );
 };
 
-const useAppTheme = () => useContext(ThemeContext);
+const useAppTheme = (): ThemeContextType => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useAppTheme must be used within AppThemeProvider');
+  }
+  return context;
+};
 
 // ==================== STYLED COMPONENTS ====================
 
@@ -178,17 +191,30 @@ const HeroGrid = styled(Box)(({ theme }) => ({
   },
 }));
 
-const DecorativeCircle = styled(Box)(({ size, top, right, bottom, left, opacity = 0.1 }) => ({
-  position: 'absolute',
-  width: size,
-  height: size,
-  borderRadius: '50%',
-  background: `rgba(255, 255, 255, ${opacity})`,
-  top,
-  right,
-  bottom,
-  left,
-}));
+interface DecorativeCircleProps {
+  size: number;
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
+  opacity?: number;
+}
+
+const DecorativeCircle: React.FC<DecorativeCircleProps> = ({ size, top, right, bottom, left, opacity = 0.1 }) => (
+  <Box
+    sx={{
+      position: 'absolute',
+      width: size,
+      height: size,
+      borderRadius: '50%',
+      background: `rgba(255, 255, 255, ${opacity})`,
+      top,
+      right,
+      bottom,
+      left,
+    }}
+  />
+);
 
 const StatsCard = styled(Box)(({ theme }) => ({
   background: theme.palette.background.paper,
@@ -216,7 +242,7 @@ const CommunitiesGrid = styled(Box)(({ theme }) => ({
   },
 }));
 
-const CommunityCard = styled(Box)(({ theme, offset }) => ({
+const CommunityCard = styled(Box)<{ offset?: boolean }>(({ theme, offset }) => ({
   background: theme.palette.background.default,
   padding: 60,
   borderRadius: 50,
@@ -238,14 +264,15 @@ const CommunityCard = styled(Box)(({ theme, offset }) => ({
   },
 }));
 
-const SplitSection = styled(Box)({
+const SplitSection = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   '@media (max-width:768px)': {
     gridTemplateColumns: '1fr',
   },
-});
+  backgroundColor: theme.palette.primary.main,
+}));
 
 const ChatDemo = styled(Box)(({ theme }) => ({
   background: theme.palette.background.paper,
@@ -511,11 +538,13 @@ const AIChatSection = () => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          bgcolor: 'primary.main',
-          color: 'white',
+          bgcolor: 'lime',
+          // bgcolor: 'primary.main',
+          color: 'primary.contrastText',
+          borderTopRightRadius: '40px',
         }}
       >
-        <Typography variant="h4" sx={{ mb: 5 }}>
+        <Typography variant="h4" sx={{ mb: 5, color: 'primary.contrastText' }}>
           AI-Powered Support, Always Here
         </Typography>
         <Typography sx={{ fontSize: '1.3rem', lineHeight: 1.8, mb: 5, opacity: 0.95 }}>
@@ -554,7 +583,7 @@ const AIChatSection = () => {
         <Button
           variant="contained"
           sx={{
-            bgcolor: 'white',
+            bgcolor: 'background.paper',
             color: 'primary.main',
             borderRadius: '35px',
             px: 5.5,
@@ -563,6 +592,7 @@ const AIChatSection = () => {
             fontWeight: 700,
             alignSelf: 'flex-start',
             '&:hover': {
+              bgcolor: 'background.paper',
               transform: 'translateY(-3px)',
               boxShadow: '0 15px 40px rgba(0,0,0,0.3)',
             },
@@ -579,6 +609,7 @@ const AIChatSection = () => {
           alignItems: 'center',
           justifyContent: 'center',
           p: { xs: 4, md: 10 },
+          borderBottomLeftRadius: '40px',
         }}
       >
         <ChatDemo>
@@ -618,6 +649,7 @@ const AIChatSection = () => {
                 fontSize: '1.05rem',
                 fontWeight: 600,
                 '&:hover': {
+                  bgcolor: 'secondary.dark',
                   transform: 'translateY(-2px)',
                   boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
                 },
@@ -640,7 +672,7 @@ const BigCTA = () => {
         py: { xs: 12, md: 22 },
         px: { xs: 3, md: 8 },
         textAlign: 'center',
-        color: 'white',
+        color: 'primary.contrastText',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -648,7 +680,7 @@ const BigCTA = () => {
       <DecorativeCircle size={700} top={-300} right={-300} opacity={0.05} />
 
       <Container maxWidth="md" sx={{ position: 'relative' }}>
-        <Typography variant="h5" sx={{ mb: 5 }}>
+        <Typography variant="h5" sx={{ mb: 5, color: 'primary.contrastText' }}>
           Ready to take control?
         </Typography>
         <Typography
@@ -656,6 +688,7 @@ const BigCTA = () => {
             fontSize: '1.5rem',
             mb: 7.5,
             opacity: 0.95,
+            color: 'primary.contrastText',
           }}
         >
           Join thousands of women who have found support, guidance, and community at WHWS.
@@ -671,7 +704,7 @@ const BigCTA = () => {
           <Button
             variant="contained"
             sx={{
-              bgcolor: 'white',
+              bgcolor: 'background.paper',
               color: 'primary.main',
               borderRadius: '35px',
               px: 6.25,
@@ -679,6 +712,7 @@ const BigCTA = () => {
               fontSize: '1.2rem',
               fontWeight: 700,
               '&:hover': {
+                bgcolor: 'background.paper',
                 transform: 'translateY(-3px)',
                 boxShadow: '0 15px 40px rgba(0,0,0,0.3)',
               },
@@ -689,8 +723,8 @@ const BigCTA = () => {
           <Button
             variant="outlined"
             sx={{
-              borderColor: 'white',
-              color: 'white',
+              borderColor: 'primary.contrastText',
+              color: 'primary.contrastText',
               borderRadius: '35px',
               borderWidth: 2,
               px: 6.25,
@@ -698,9 +732,10 @@ const BigCTA = () => {
               fontSize: '1.2rem',
               fontWeight: 700,
               '&:hover': {
-                bgcolor: 'white',
+                bgcolor: 'background.paper',
                 color: 'primary.main',
                 borderWidth: 2,
+                borderColor: 'background.paper',
               },
             }}
           >

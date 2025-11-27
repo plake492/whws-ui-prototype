@@ -1,31 +1,25 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL") // Only needed when using a cloud-hosted database
-  schemas           = ["public"]
+  provider = "postgresql"
+  schemas  = ["public"]
 }
 
 model Community {
-  id          String              @id @default(uuid())
+  id          String            @id @default(uuid())
   name        String
-  slug        String              @unique
   description String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   coverImage  String?
-  tags        String[]            @default([])
-  posts       Post[]
+  slug        String            @unique
+  tags        String[]          @default([])
+  media       String?
+  memberCount Decimal?          @db.Decimal @map("members")
   members     CommunityMember[]
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
+  posts       Post[]
 
   @@schema("public")
 }
@@ -33,23 +27,26 @@ model Community {
 model CommunityMember {
   id          String    @id @default(uuid())
   userId      String
-  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
   communityId String
   joinedAt    DateTime  @default(now())
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
 
   @@unique([userId, communityId])
   @@schema("public")
 }
 
 model Post {
-  id          String    @id @default(uuid())
-  title       String
-  content     String
-  authorId    String
-  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
-  communityId String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String     @id @default(uuid())
+  title        String
+  content      String
+  authorId     String
+  communityId  String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  commentCount Int        @default(0)
+  users        users      @relation(fields: [authorId], references: [id])
+  community    Community  @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  comments     comments[]
 
   @@schema("public")
 }
@@ -86,25 +83,25 @@ model Sponsor {
 }
 
 model Offer {
-  id                 String              @id @default(uuid())
+  id                 String            @id @default(uuid())
   sponsorId          String
-  sponsor            Sponsor             @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
   title              String
-  description        String              @db.Text
+  description        String
   discountDetails    String
-  termsConditions    String              @db.Text
-  qrCodeData         String?             @db.Text
-  qrCodeImage        String?             @db.Text
-  validFrom          DateTime            @default(now())
+  termsConditions    String
+  qrCodeData         String?
+  qrCodeImage        String?
+  validFrom          DateTime          @default(now())
   validUntil         DateTime?
   totalLimit         Int?
-  perUserLimit       Int                 @default(1)
-  currentRedemptions Int                 @default(0)
+  perUserLimit       Int               @default(1)
+  currentRedemptions Int               @default(0)
   imageUrl           String?
-  isActive           Boolean             @default(true)
-  isFeatured         Boolean             @default(false)
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
+  isActive           Boolean           @default(true)
+  isFeatured         Boolean           @default(false)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  sponsor            Sponsor           @relation(fields: [sponsorId], references: [id], onDelete: Cascade)
   redemptions        OfferRedemption[]
   savedBy            UserSavedOffer[]
 
@@ -117,10 +114,9 @@ model Offer {
 model OfferRedemption {
   id               String    @id @default(uuid())
   offerId          String
-  offer            Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
   userId           String
   redeemedAt       DateTime  @default(now())
-  qrCodeData       String?   @db.Text
+  qrCodeData       String?
   redemptionMethod String    @default("qr_code")
   isVerified       Boolean   @default(false)
   verifiedBy       String?
@@ -128,7 +124,8 @@ model OfferRedemption {
   latitude         Float?
   longitude        Float?
   ipAddress        String?
-  notes            String?   @db.Text
+  notes            String?
+  offer            Offer     @relation(fields: [offerId], references: [id], onDelete: Cascade)
 
   @@unique([offerId, userId])
   @@index([offerId])
@@ -141,11 +138,67 @@ model UserSavedOffer {
   id      String   @id @default(uuid())
   userId  String
   offerId String
-  offer   Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
   savedAt DateTime @default(now())
+  offer   Offer    @relation(fields: [offerId], references: [id], onDelete: Cascade)
 
   @@unique([userId, offerId])
   @@index([userId])
   @@index([offerId])
+  @@schema("public")
+}
+
+model comment_hearts {
+  id        String   @id
+  commentId String
+  userId    String
+  createdAt DateTime @default(now())
+  comments  comments @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+  @@schema("public")
+}
+
+model comments {
+  id             String           @id
+  content        String
+  postId         String
+  authorId       String
+  parentId       String?
+  heartCount     Int              @default(0)
+  isEdited       Boolean          @default(false)
+  editedAt       DateTime?
+  isDeleted      Boolean          @default(false)
+  deletedAt      DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  comment_hearts comment_hearts[]
+  users          users            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments       comments?        @relation("commentsTocomments", fields: [parentId], references: [id], onDelete: Cascade)
+  other_comments comments[]       @relation("commentsTocomments")
+  Post           Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([parentId])
+  @@index([postId, createdAt])
+  @@index([postId, parentId])
+  @@schema("public")
+}
+
+model users {
+  id                String           @id
+  email             String           @unique
+  name              String?
+  avatarUrl         String?
+  aiLearningConsent Boolean          @default(false)
+  showInChannelOnly Boolean          @default(false)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime
+  Post              Post[]
+  comment_hearts    comment_hearts[]
+  comments          comments[]
+
   @@schema("public")
 }

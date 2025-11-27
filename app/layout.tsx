@@ -5,6 +5,7 @@ import ThemeRegistry from '@/components/ThemeRegistry';
 import Footer from '@/components/Footer';
 import { AuthProvider } from '@/contexts/AuthContext';
 import AnalyticsWrapper from '@/components/AnalyticsWrapper';
+import Navigation from '@/components/UI/Navigation';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
