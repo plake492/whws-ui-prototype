@@ -1,5 +1,22 @@
 export type CollectionOptions = 'menopause' | 'breast_cancer';
 
+export interface Community {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  coverImage: string | null;
+  tags: string[];
+  media: string | null;
+  memberCount: number | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  members?: number;
+  _count?: {
+    members: number;
+  };
+}
+
 export interface AuthContextType {
   user: import('@supabase/supabase-js').User | null;
   loading: boolean;
