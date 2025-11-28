@@ -16,7 +16,6 @@ model Community {
   coverImage  String?
   slug        String            @unique
   tags        String[]          @default([])
-  media       String?
   memberCount Decimal?          @db.Decimal @map("members")
   members     CommunityMember[]
   posts       Post[]
