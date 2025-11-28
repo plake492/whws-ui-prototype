@@ -2,7 +2,7 @@
 
 import { createTheme } from '@mui/material/styles';
 
-// Extend the theme to include custom colors
+// Extend the theme to include custom colors and typography variants
 declare module '@mui/material/styles' {
   interface Palette {
     accent: {
@@ -21,6 +21,36 @@ declare module '@mui/material/styles' {
   interface TypeBackground {
     cream?: string;
     gray?: string;
+  }
+  interface TypographyVariants {
+    title1: React.CSSProperties | object;
+    title2: React.CSSProperties | object;
+    title3: React.CSSProperties | object;
+    title4: React.CSSProperties | object;
+    title5: React.CSSProperties | object;
+  }
+  interface TypographyVariantsOptions {
+    title1?: React.CSSProperties | object;
+    title2?: React.CSSProperties | object;
+    title3?: React.CSSProperties | object;
+    title4?: React.CSSProperties | object;
+    title5?: React.CSSProperties | object;
+  }
+}
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    title1: true;
+    title2: true;
+    title3: true;
+    title4: true;
+    title5: true;
+  }
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides {
+    cta: true;
   }
 }
 
@@ -78,9 +108,35 @@ const palette = {
 
 export default createTheme({
   palette,
+  components: {
+    MuiButton: {
+      variants: [
+        {
+          props: { variant: 'cta' },
+          style: {
+            backgroundColor: '#1e1e1e',
+            color: '#ffffff',
+            padding: '1rem 2.5rem',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            border: 'none',
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              backgroundColor: '#2d2d2d',
+              transform: 'translateY(-1px)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+            },
+          },
+        },
+      ],
+    },
+  },
   typography: {
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    h1: {
+    // Display titles for hero sections and major headings
+    title1: {
       fontSize: '7rem',
       fontWeight: 900,
       lineHeight: 0.95,
@@ -88,55 +144,148 @@ export default createTheme({
       '@media (max-width:1200px)': {
         fontSize: '5rem',
       },
-      '@media (max-width:768px)': {
-        fontSize: '3.5rem',
+      '@media (max-width:900px)': {
+        fontSize: '4rem',
       },
-    },
-    h2: {
-      fontSize: '4.5rem',
-      fontWeight: 900,
-      lineHeight: 1.1,
-      '@media (max-width:1200px)': {
-        fontSize: '3.5rem',
-      },
-      '@media (max-width:768px)': {
-        fontSize: '2.5rem',
-      },
-    },
-    h3: {
-      fontSize: '2.2rem',
-      fontWeight: 700,
-      lineHeight: 1.3,
-    },
-    h4: {
-      fontSize: '4rem',
-      fontWeight: 900,
-      lineHeight: 1.1,
-      '@media (max-width:1200px)': {
+      '@media (max-width:600px)': {
         fontSize: '3rem',
       },
     },
-    h5: {
+    title2: {
       fontSize: '5.5rem',
       fontWeight: 900,
-      lineHeight: 1.1,
+      lineHeight: 1,
+      letterSpacing: '-0.025em',
       '@media (max-width:1200px)': {
-        fontSize: '4rem',
+        fontSize: '4.5rem',
       },
-      '@media (max-width:768px)': {
-        fontSize: '2.8rem',
+      '@media (max-width:900px)': {
+        fontSize: '3.5rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '2.5rem',
+      },
+    },
+    title3: {
+      fontSize: '4.5rem',
+      fontWeight: 900,
+      lineHeight: 1.05,
+      letterSpacing: '-0.02em',
+      '@media (max-width:1200px)': {
+        fontSize: '3.75rem',
+      },
+      '@media (max-width:900px)': {
+        fontSize: '3rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '2.25rem',
+      },
+    },
+    title4: {
+      fontSize: '4rem',
+      fontWeight: 800,
+      lineHeight: 1.1,
+      letterSpacing: '-0.015em',
+      '@media (max-width:1200px)': {
+        fontSize: '3.25rem',
+      },
+      '@media (max-width:900px)': {
+        fontSize: '2.5rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '2rem',
+      },
+    },
+    title5: {
+      fontSize: '3.75rem',
+      fontWeight: 800,
+      lineHeight: 1.1,
+      letterSpacing: '-0.01em',
+      '@media (max-width:1200px)': {
+        fontSize: '3rem',
+      },
+      '@media (max-width:900px)': {
+        fontSize: '2.25rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '1.875rem',
+      },
+    },
+    // Standard headings for content hierarchy
+    h1: {
+      fontSize: '3.5rem',
+      fontWeight: 700,
+      lineHeight: 1.1,
+      letterSpacing: '-0.02em',
+      '@media (max-width:900px)': {
+        fontSize: '2.75rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '2rem',
+      },
+    },
+    h2: {
+      fontSize: '2.75rem',
+      fontWeight: 700,
+      lineHeight: 1.2,
+      letterSpacing: '-0.01em',
+      '@media (max-width:900px)': {
+        fontSize: '2.25rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '1.75rem',
+      },
+    },
+    h3: {
+      fontSize: '2.25rem',
+      fontWeight: 600,
+      lineHeight: 1.3,
+      '@media (max-width:900px)': {
+        fontSize: '1.875rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '1.5rem',
+      },
+    },
+    h4: {
+      fontSize: '1.75rem',
+      fontWeight: 600,
+      lineHeight: 1.4,
+      '@media (max-width:900px)': {
+        fontSize: '1.5rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '1.25rem',
+      },
+    },
+    h5: {
+      fontSize: '1.5rem',
+      fontWeight: 600,
+      lineHeight: 1.4,
+      '@media (max-width:900px)': {
+        fontSize: '1.25rem',
+      },
+      '@media (max-width:600px)': {
+        fontSize: '1.125rem',
+      },
+    },
+    h6: {
+      fontSize: '1.25rem',
+      fontWeight: 600,
+      lineHeight: 1.5,
+      '@media (max-width:600px)': {
+        fontSize: '1.125rem',
       },
     },
     body1: {
-      fontSize: '1.4rem',
-      lineHeight: 1.7,
-      '@media (max-width:768px)': {
-        fontSize: '1.1rem',
-      },
+      fontSize: '1rem',
+      lineHeight: 1.6,
+      fontWeight: 400,
     },
     body2: {
-      fontSize: '1.2rem',
-      lineHeight: 1.7,
+      fontSize: '0.875rem',
+      lineHeight: 1.6,
+      fontWeight: 400,
     },
   },
 });

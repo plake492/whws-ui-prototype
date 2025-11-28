@@ -83,7 +83,6 @@ export default function SignupPage() {
 
   return (
     <>
-      <Header />
       <Box
         sx={{
           minHeight: '100vh',
@@ -92,7 +91,7 @@ export default function SignupPage() {
           bgcolor: 'background.default',
           py: 8,
         }}
-        className="animated-gradient"
+        className="primary-gradient"
       >
         <Container maxWidth="sm">
           <Paper

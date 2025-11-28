@@ -2,8 +2,6 @@
 
 import { Container, Typography, Box } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { useState } from 'react';
-import Header from '@/components/Header';
 import SponsorCard from '@/components/sponsors/SponsorCard';
 import { dummySponsors, dummyOffers } from '@/lib/dummySponsors';
 
@@ -17,7 +15,6 @@ export default function SponsorsPage() {
 
   return (
     <Box>
-      <Header />
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Typography variant="h2" sx={{ mb: 1, fontWeight: 700 }}>
           Our Sponsors

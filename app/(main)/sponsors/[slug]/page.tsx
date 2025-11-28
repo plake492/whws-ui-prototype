@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import { ArrowBack } from '@mui/icons-material';
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Header from '@/components/Header';
+
 import SponsorHero from '@/components/sponsors/SponsorHero';
 import RichTextRenderer from '@/components/sponsors/RichTextRenderer';
 import OfferCard from '@/components/offers/OfferCard';
@@ -23,7 +23,6 @@ export default function SponsorProfilePage() {
   if (!sponsor) {
     return (
       <Box>
-        <Header />
         <Container sx={{ py: 4 }}>
           <Typography variant="h4">Sponsor not found</Typography>
           <Button onClick={() => router.push('/sponsors')} sx={{ mt: 2 }}>
@@ -36,8 +35,6 @@ export default function SponsorProfilePage() {
 
   return (
     <Box>
-      <Header />
-
       <SponsorHero sponsor={sponsor} />
 
       <Container maxWidth="lg" sx={{ py: 4 }}>

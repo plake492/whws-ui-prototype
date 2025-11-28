@@ -11,13 +11,15 @@ import {
   Tab,
   Stack,
   CircularProgress,
+  Paper,
 } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import { Search, Toys } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
-import CommunityCard from '@/components/CommunityCard';
+import CommunitiesCard from '@/components/communities/CommunitiesCard';
+import CommunitiesHero from '@/components/communities/CommunitiesHero';
+
 import PostCard from '@/components/PostCard';
 import { dummyPosts, getUserById } from '@/lib/dummyData';
-import Header from '@/components/Header';
 
 export default function CommunitiesPage() {
   const [tabValue, setTabValue] = useState(0);
@@ -54,108 +56,114 @@ export default function CommunitiesPage() {
   const discoverCommunities = filteredCommunities;
 
   return (
-    <Box sx={{ bgcolor: 'rgb(253, 206, 99)' }}>
-      <Header />
-      {/* <Container maxWidth="lg" sx={{ py: 4 }}> */}
+    <Box
+      sx={{
+        p: 4,
+        background: (theme) =>
+          `linear-gradient(135deg, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
+        flex: 1,
+        position: 'relative',
+      }}
+    >
       {/* Hero Section */}
-      <Box sx={{ textAlign: 'center', mb: 6, bgcolor: '#ffffff' }}>
-        <Container maxWidth="lg" sx={{ py: 8 }}>
-          <Typography variant="h2" sx={{ mb: 2, fontWeight: 700 }}>
-            Welcome to the Community Hub
-          </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
-            Connect, share, and learn from others on similar health journeys
-          </Typography>
+      <CommunitiesHero />
 
-          <TextField
-            fullWidth
-            placeholder="Search communities..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{ maxWidth: 600, mx: 'auto' }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
+      <Grid container columnSpacing={4}>
+        <Grid size={2}>
+          <Box
+            sx={{
+              width: '100%',
+              minHeight: '90dvh',
+              backgroundColor: 'background.default',
+              borderRadius: '12px',
+              p: 3,
             }}
-          />
-        </Container>
-      </Box>
-
-      {/* My Communities */}
-      {myCommunities.length > 0 && (
-        <Box sx={{ mb: 6 }}>
-          <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+          >
+            <Typography variant="h5" sx={{ mb: 6, fontWeight: 600 }}>
               My Communities
             </Typography>
-            <Grid container spacing={3}>
-              {myCommunities.slice(0, 3).map((community) => (
-                <Grid item size={{ xs: 12, sm: 6, md: 4 }} key={community.id}>
-                  <CommunityCard community={community} onJoinChange={fetchCommunities} />
+            <Stack direction={'column'} gap={2}>
+              {Array.from({ length: 5 }, (_, index) => (
+                <Grid
+                  container
+                  sx={{
+                    borderWidth: 0.5,
+                    borderStyle: 'solid',
+                    borderColor: 'background.default',
+                    transition: 'border-color 200ms ease-in-out, bacground-color 250ms ease-in-out',
+                    borderRadius: '12px',
+                    pl: 2,
+                    pr: 4,
+                    py: 1.5,
+                    cursor: 'pointer',
+                    '&:hover': {
+                      borderColor: 'primary.light',
+                      backgroundColor: (theme) => `${theme.palette.primary.light}50`,
+                    },
+                  }}
+                >
+                  <Grid>
+                    <Box>My community</Box>
+                  </Grid>
                 </Grid>
               ))}
-            </Grid>
-          </Container>
-        </Box>
-      )}
-
-      {/* Discover Communities */}
-      <Box sx={{ mb: 6 }}>
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-          <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-            Discover Communities
-          </Typography>
-
-          <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 3 }}>
-            <Tab label="All Communities" />
-            <Tab label="Most Active" />
-            <Tab label="Newest" />
-            <Tab label="Recommended" />
-          </Tabs>
-
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-              <CircularProgress />
-            </Box>
-          ) : discoverCommunities.length === 0 ? (
-            <Box sx={{ textAlign: 'center', py: 8 }}>
-              <Typography variant="h6" color="text.secondary">
-                No communities found
+            </Stack>
+          </Box>
+        </Grid>
+        <Grid size={7}>
+          <Box>
+            <Container maxWidth="lg" sx={{ py: 4 }}>
+              <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+                Recent Activity
               </Typography>
-            </Box>
-          ) : (
-            <Grid container spacing={3}>
-              {discoverCommunities.map((community) => (
-                <Grid item key={community.id} size={12}>
-                  <CommunityCard
-                    key={community.id}
-                    community={community}
-                    variant="horizontal"
-                    onJoinChange={fetchCommunities}
-                  />
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Container>
-      </Box>
+              <Stack spacing={2}>
+                {dummyPosts.slice(0, 5).map((post) => (
+                  <PostCard key={post.id} post={post} author={getUserById(post.authorId)} />
+                ))}
+              </Stack>
+            </Container>
+          </Box>
+        </Grid>
+        <Grid size={3}>
+          <Box sx={{ mb: 6, p: 3 }}>
+            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+              Discover Communities
+            </Typography>
 
-      {/* Recent Activity */}
-      <Box>
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-          <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-            Recent Activity
-          </Typography>
-          <Stack spacing={2}>
-            {dummyPosts.slice(0, 5).map((post) => (
-              <PostCard key={post.id} post={post} author={getUserById(post.authorId)} />
-            ))}
-          </Stack>
-        </Container>
-      </Box>
+            <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 3 }}>
+              <Tab label="All Communities" />
+              <Tab label="Most Active" />
+              <Tab label="Newest" />
+              <Tab label="Recommended" />
+            </Tabs>
+
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+                <CircularProgress />
+              </Box>
+            ) : discoverCommunities.length === 0 ? (
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <Typography variant="h6" color="text.secondary">
+                  No communities found
+                </Typography>
+              </Box>
+            ) : (
+              <Grid container spacing={3}>
+                {discoverCommunities.map((community) => (
+                  <Grid item key={community.id} size={12}>
+                    <CommunitiesCard
+                      key={community.id}
+                      community={community}
+                      variant="horizontal"
+                      onJoinChange={fetchCommunities}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

@@ -4,7 +4,9 @@ import { Pool } from 'pg';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Use direct connection for seeding/migrations, pooled for application
+const connectionString = process.env.DIRECT_DATABASE_URL || process.env.DATABASE_URL;
+const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 
 export const prisma =
