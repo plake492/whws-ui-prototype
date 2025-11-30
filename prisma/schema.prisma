@@ -14,6 +14,7 @@ model Community {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   coverImage  String?
+  media       String?
   slug        String            @unique
   tags        String[]          @default([])
   memberCount Decimal?          @db.Decimal @map("members")
@@ -186,6 +187,42 @@ model comments {
   @@schema("public")
 }
 
+
+model IntakeFormSubmission {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+
+  // Basic profile
+  name              String?
+  email             String?
+  ageRange          String?
+  location          String?
+  gender            String?
+  lifeStage         String?
+
+  // Topics & health info
+  topics            String[] @default([])
+  symptoms          String?
+  diagnosis         String?
+  medications       String?
+
+  // Goals & preferences
+  goals             String?
+  communityComfort  String?
+
+  // Consent flags
+  consentInfo       Boolean
+  consentEmergency  Boolean
+  consentPrivacy    Boolean
+
+  // Optional linkage to a user account if you add a User model
+  userId            String?
+
+  @@index([email])
+  @@index([userId])
+  @@schema("public")
+}
+
 model users {
   id                String           @id
   email             String           @unique
@@ -201,3 +238,5 @@ model users {
 
   @@schema("public")
 }
+
+

@@ -60,6 +60,7 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
             `linear-gradient(135deg, ${theme.palette.background.paper}EE 40%, ${theme.palette.background.default}EE 100%)`,
           backdropFilter: 'blur(10px)',
           borderBottom: '1px solid rgba(0,0,0,0.05)',
+          height: '100px',
         }}
       >
         <Container maxWidth={false} sx={{ px: { xs: 2, md: 8 } }}>

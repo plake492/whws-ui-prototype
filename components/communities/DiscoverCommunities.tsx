@@ -1,10 +1,10 @@
 'use client';
 
-import { CommunitiesProps } from '@/types';
+import { CommunityWithUser } from '@/types';
 import { Typography, Grid, Box } from '@mui/material';
 import CommunitiesCard from '@/components/communities/CommunitiesCard';
 
-const DiscoverCommunities = ({ communities }: CommunitiesProps) => {
+const DiscoverCommunities = ({ communities }: { communities: CommunityWithUser[] }) => {
   return (
     <Box sx={{ mb: 6, p: 3 }}>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
