@@ -1,7 +1,7 @@
-import Navigation from '@/components/UI/Navigation';
+import Navigation from '@/components/homepage/Navigation';
 
-const Component = ({ children }: { children: React.ReactNode }) => {
+const layout = ({ children }: { children: React.ReactNode }) => {
   return <Navigation>{children}</Navigation>;
 };
 
-export default Component;
+export default layout;

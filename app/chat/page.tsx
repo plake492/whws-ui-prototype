@@ -212,7 +212,7 @@ export default function Component() {
           bgcolor: 'background.default',
           flex: 1,
         }}
-        className="animated-gradient"
+        className="primary-gradient"
       >
         {/* Header */}
         <Paper
@@ -316,7 +316,7 @@ export default function Component() {
           </Paper>
         </Box>
       </Box>
-      {/* <Box sx={{ height: '100%', maxWidth: '275px', overflow: 'hidden' }} className="animated-gradient"></Box> */}
+      {/* <Box sx={{ height: '100%', maxWidth: '275px', overflow: 'hidden' }} className="primary-gradient"></Box> */}
 
       {/* Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onClose={handleCancelSwitch}>

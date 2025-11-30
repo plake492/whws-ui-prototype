@@ -39,7 +39,7 @@ export default function LoginPage() {
       if (error) {
         setError(error.message);
       } else {
-        router.push('/communities');
+        // router.push('/communities');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
@@ -50,7 +50,6 @@ export default function LoginPage() {
 
   return (
     <>
-      <Header />
       <Box
         sx={{
           minHeight: '100vh',
@@ -59,7 +58,7 @@ export default function LoginPage() {
           bgcolor: 'background.default',
           py: 8,
         }}
-        className="animated-gradient"
+        className="primary-gradient"
       >
         <Container maxWidth="sm">
           <Paper

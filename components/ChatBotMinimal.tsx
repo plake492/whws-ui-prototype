@@ -1,7 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Box, Stack, Paper, Typography, Alert, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import {
+  Container,
+  Box,
+  Stack,
+  Paper,
+  Alert,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
 import ChatMessages from '@/components/ChatMessages';
 import ChatInput from '@/components/ChatInput';
 import { sendChatMessageStream, ChatMessage as ApiChatMessage, StreamChunk } from '@/utils/api';
@@ -195,7 +207,7 @@ export default function Component() {
         maxHeight: '900px',
         position: 'relative',
       })}
-      className="animated-gradient"
+      className="primary-gradient"
     >
       {/* Main Chat Area */}
       <Container
@@ -255,7 +267,12 @@ export default function Component() {
                     {collection}
                   </Button>
                 ))}
-                <Button variant="outlined" startIcon={<AddIcon />} sx={{ borderRadius: '12px', ml: 'auto' }} onClick={newChat}>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddIcon />}
+                  sx={{ borderRadius: '12px', ml: 'auto' }}
+                  onClick={newChat}
+                >
                   New Chat
                 </Button>
               </Stack>

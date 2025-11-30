@@ -1,9 +1,9 @@
-import Hero from '@/components/UI/Hero';
-import SponsorSection from '@/components/UI/SponsorSection';
+import Hero from '@/components/homepage/Hero';
+import SponsorSection from '@/components/homepage/SponsorSection';
 import Footer from '@/components/Footer';
-import CommunitySection from '@/components/UI/CommunitySection';
-import AIChatSection from '@/components/UI/AIChatSection';
-import CTASection from '@/components/UI/CTASection';
+import CommunitySection from '@/components/homepage/CommunitySection';
+import AIChatSection from '@/components/homepage/AIChatSection';
+import CTASection from '@/components/homepage/CTASection';
 
 export default function App() {
   return (

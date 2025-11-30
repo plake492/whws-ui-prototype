@@ -25,11 +25,13 @@ const CommunityCards = ({ communities }: CommunityCardsProps) => {
         </Box>
 
         <Grid container spacing={4}>
-          {communities.map((community) => (
-            <Grid size={{ xs: 12, md: 6 }} key={community.id}>
-              <CommunityCard community={community} />
-            </Grid>
-          ))}
+          {communities
+            .filter((_, i) => i < 4)
+            .map((community) => (
+              <Grid size={{ xs: 12, md: 6 }} key={community.id}>
+                <CommunityCard community={community} />
+              </Grid>
+            ))}
         </Grid>
       </Container>
     </Box>
@@ -67,7 +69,7 @@ const CommunityCard = ({ community }: { community: Community }) => {
             flex: 1,
           }}
         >
-          <Typography variant="h4" sx={{ mb: 2, color: 'text.secondary' }}>
+          <Typography variant="h6" sx={{ mb: 2, color: 'text.secondary' }}>
             {community.name}
           </Typography>
           <Typography variant="body1" sx={{ mb: 3, color: 'text.primary' }}>

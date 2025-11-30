@@ -5,7 +5,6 @@ import ThemeRegistry from '@/components/ThemeRegistry';
 import Footer from '@/components/Footer';
 import { AuthProvider } from '@/contexts/AuthContext';
 import AnalyticsWrapper from '@/components/AnalyticsWrapper';
-import Navigation from '@/components/UI/Navigation';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,9 +27,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
           <ThemeRegistry>
-            <AnalyticsWrapper>{children}</AnalyticsWrapper>
+            <AnalyticsWrapper>
+              {children}
+              <Footer />
+            </AnalyticsWrapper>
           </ThemeRegistry>
-          <Footer />
         </AuthProvider>
       </body>
     </html>

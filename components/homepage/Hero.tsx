@@ -1,24 +1,24 @@
 'use client';
 
 import { Box, Typography, Button } from '@mui/material';
-import { HeroSection, DecorativeCircle, HeroGrid, StatsCard, StatItem } from '@/components/UI/StyledComponents';
+import { HeroSection, DecorativeCircle, HeroGrid, StatsCard, StatItem } from '@/components/homepage/StyledComponents';
 
 const Hero = () => {
   return (
-    <HeroSection>
+    <HeroSection className="primary-gradient">
       <DecorativeCircle size={600} top={-200} right={-200} />
       <DecorativeCircle size={400} bottom={-100} left={-100} opacity={0.05} />
 
       <HeroGrid>
         <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <Typography variant="h1" color="primary" sx={{ mb: 5 }}>
+          <Typography variant="title1" color="primary">
             Your health
             <Box component="span" sx={{ display: 'block', color: 'secondary.main' }}>
               journey.
             </Box>
             Your community.
           </Typography>
-          <Typography variant="body1" color="text.primary" sx={{ mb: 6, maxWidth: 600 }}>
+          <Typography variant="body1" color="text.primary" sx={{ mb: 6, mt: 4, maxWidth: 600 }}>
             Connect with women who understand your experience. Get AI-powered support, expert guidance, and a community
             that's here for you every step of the way.
           </Typography>

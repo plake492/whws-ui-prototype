@@ -8,7 +8,7 @@ const CTASection = () => {
     <Box
       sx={{
         background: (theme) =>
-          `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          `linear-gradient(175deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
         py: 12,
         px: { xs: 3, md: 8 },
         color: 'white',
