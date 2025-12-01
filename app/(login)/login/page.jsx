@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Box,
   Typography,
@@ -18,8 +18,8 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
-  const params = useParams();
-  const redirect = params.redirect;
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
   const router = useRouter();
   const { signIn } = useAuth();
 
@@ -40,7 +40,6 @@ export default function LoginPage() {
         setError(error.message);
       } else {
         router.push(redirect || '/');
-        // router.push('/communities');
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');

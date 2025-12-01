@@ -2,7 +2,6 @@
 
 import Grid from '@mui/material/Grid';
 import { CommunityWithUser, User } from '@/types';
-
 import CommunitiesHero from '@/components/communities/CommunitiesHero';
 import MyCommunities from '@/components/communities/MyCommunities';
 import RecentActivity from '@/components/communities/RecentActivity';
@@ -15,6 +14,8 @@ interface CommunityAndUser {
 }
 
 const _render = ({ user, usersCommunities, allCommunities }: CommunityAndUser) => {
+  console.log('user ==>', user);
+
   return (
     <>
       <CommunitiesHero />
@@ -23,8 +24,8 @@ const _render = ({ user, usersCommunities, allCommunities }: CommunityAndUser) =
           <Grid size={2}>
             <MyCommunities communities={usersCommunities} />
           </Grid>
-          {/* // TODO Fetch ommunity Activity */}
           <Grid size={7}>
+            {/* // TODO Fetch community Activity */}
             <RecentActivity />
           </Grid>
           <Grid size={3}>

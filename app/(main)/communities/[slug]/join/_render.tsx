@@ -22,6 +22,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormWrapper from '@/components/FormWrapper';
+import { User } from '@/types';
 
 // Zod schema for intake form
 const ageRanges = ['Under 18', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
@@ -80,8 +81,9 @@ const stepFieldGroups: string[][] = [
   ['goals', 'communityComfort', 'consentInfo', 'consentEmergency', 'consentPrivacy'],
 ];
 
-export default function IntakeFormPage() {
+export default function IntakeFormPage({ user }: { user: User }) {
   const [activeStep, setActiveStep] = useState(0);
+  console.log('user ==>', user);
 
   const {
     control,
@@ -92,8 +94,8 @@ export default function IntakeFormPage() {
   } = useForm<IntakeFormValues>({
     resolver: zodResolver(IntakeFormSchema) as any,
     defaultValues: {
-      name: '',
-      email: '',
+      name: user?.user_metadata?.display_name || '',
+      email: user?.email || '',
       ageRange: '',
       location: '',
       gender: '',

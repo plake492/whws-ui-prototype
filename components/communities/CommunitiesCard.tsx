@@ -142,7 +142,7 @@ const ActionButtons = ({ community }: { community: CommunitiesCardProps['communi
 
           <Button
             component={Link}
-            href={`/communities/join?community=${community.slug}`}
+            href={`/communities/${community.slug}/join`}
             sx={{
               bgcolor: 'primary.main',
               color: 'white',

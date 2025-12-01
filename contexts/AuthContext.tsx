@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { AuthContextType } from '@/types';
+import { upsertUser } from '@/app/(login)/_actions';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -45,6 +46,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         data: metadata,
       },
     });
+
+    if (!error && data) await upsertUser(data.user);
     return { data, error };
   };
 

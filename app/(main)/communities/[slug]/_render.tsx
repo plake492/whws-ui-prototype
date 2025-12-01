@@ -24,9 +24,9 @@ export default function CommunityPage({ usersCommunities, community }: any) {
   return (
     <>
       <Grid container columnSpacing={4}>
-        <Grid size={2}>
+        {/* <Grid size={2}>
           <MyCommunities communities={usersCommunities} />
-        </Grid>
+        </Grid> */}
         <Grid size={10}>
           <Container maxWidth="lg" sx={{ py: 4 }}>
             <Button component={Link} href="/communities" startIcon={<ArrowBack />} sx={{ mb: 3 }}>
