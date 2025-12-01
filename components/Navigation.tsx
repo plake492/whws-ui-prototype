@@ -144,9 +144,9 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
               ) : (
                 <>
                   <Typography sx={{ color: 'text.primary', fontWeight: 500 }} variant="subtitle1">
-                    <Link href={'login'}>Login</Link>
+                    <Link href={'/login'}>Login</Link>
                   </Typography>
-                  <Link href={'signup'}>
+                  <Link href={'/signup'}>
                     <Button
                       variant="contained"
                       sx={{

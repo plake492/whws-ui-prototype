@@ -1,11 +1,7 @@
-import Redner from './_render';
+import Join from './_render';
 
-const loading = () => {
-  return (
-    // <Box sx={{ minHeight: '100dvh', display: 'grid', placeContent: 'center', minWidth: '100vw' }}>
-    <Redner />
-    // </Box>
-  );
+const Component = () => {
+  return <Join />;
 };
 
-export default loading;
+export default Component;

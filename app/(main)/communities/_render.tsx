@@ -18,18 +18,22 @@ const _render = ({ user, usersCommunities, allCommunities }: CommunityAndUser) =
   return (
     <>
       <CommunitiesHero />
-      <Grid container columnSpacing={4}>
-        <Grid size={2}>
-          <MyCommunities communities={usersCommunities} />
+      {user ? (
+        <Grid container columnSpacing={4}>
+          <Grid size={2}>
+            <MyCommunities communities={usersCommunities} />
+          </Grid>
+          {/* // TODO Fetch ommunity Activity */}
+          <Grid size={7}>
+            <RecentActivity />
+          </Grid>
+          <Grid size={3}>
+            <DiscoverCommunities communities={allCommunities} />
+          </Grid>
         </Grid>
-        {/* // TODO Fetch ommunity Activity */}
-        <Grid size={7}>
-          <RecentActivity />
-        </Grid>
-        <Grid size={3}>
-          <DiscoverCommunities communities={allCommunities} />
-        </Grid>
-      </Grid>
+      ) : (
+        <DiscoverCommunities communities={allCommunities} fullscreen />
+      )}
     </>
   );
 };

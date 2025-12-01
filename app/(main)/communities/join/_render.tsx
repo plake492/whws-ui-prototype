@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Container,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -22,6 +21,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import FormWrapper from '@/components/FormWrapper';
 
 // Zod schema for intake form
 const ageRanges = ['Under 18', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
@@ -151,7 +151,7 @@ export default function IntakeFormPage() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 4 }}>
+    <FormWrapper>
       <Typography variant="h3" fontWeight={600} mb={1}>
         Women's Health Intake
       </Typography>
@@ -417,6 +417,6 @@ export default function IntakeFormPage() {
           )}
         </Box>
       </Box>
-    </Container>
+    </FormWrapper>
   );
 }

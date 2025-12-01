@@ -43,10 +43,10 @@
   "typescript.enablePromptUseWorkspaceTsdk": true,
 
   // Enable parameter hints
-  "typescript.inlayHints.parameterNames.enabled": "all",
-  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
-  "typescript.inlayHints.variableTypes.enabled": true,
-  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  // "typescript.inlayHints.parameterNames.enabled": "all",
+  // "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  // "typescript.inlayHints.variableTypes.enabled": true,
+  // "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
 
   // Enable quick suggestions
   "editor.quickSuggestions": {
@@ -78,7 +78,7 @@
   "javascript.validate.enable": true,
 
   // Prioritize TypeScript suggestions
-  "editor.snippetSuggestions": "bottom",
   "typescript.suggest.enabled": true,
+  "editor.snippetSuggestions": "top",
   "javascript.suggest.enabled": true
 }

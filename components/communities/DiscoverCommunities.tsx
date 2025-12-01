@@ -1,10 +1,14 @@
-'use client';
-
 import { CommunityWithUser } from '@/types';
 import { Typography, Grid, Box } from '@mui/material';
 import CommunitiesCard from '@/components/communities/CommunitiesCard';
 
-const DiscoverCommunities = ({ communities }: { communities: CommunityWithUser[] }) => {
+const DiscoverCommunities = ({
+  communities,
+  fullscreen,
+}: {
+  communities: CommunityWithUser[];
+  fullscreen?: boolean;
+}) => {
   return (
     <Box sx={{ mb: 6, p: 3 }}>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
@@ -13,8 +17,8 @@ const DiscoverCommunities = ({ communities }: { communities: CommunityWithUser[]
 
       <Grid container spacing={3}>
         {communities.map((community) => (
-          <Grid key={community.id} size={12}>
-            <CommunitiesCard community={community} variant="vertical" />
+          <Grid key={community.id} size={fullscreen ? 6 : 12}>
+            <CommunitiesCard community={community} variant={fullscreen ? 'horizontal' : 'vertical'} />
           </Grid>
         ))}
       </Grid>

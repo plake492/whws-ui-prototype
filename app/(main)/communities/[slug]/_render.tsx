@@ -5,14 +5,12 @@ import { People, Forum, ArrowBack } from '@mui/icons-material';
 import Link from 'next/link';
 import { getUserById } from '@/lib/dummyData';
 import { formatTimeAgo } from '@/utils/formatTime';
-import Header from '@/components/Header';
 import MyCommunities from '@/components/communities/MyCommunities';
 
 export default function CommunityPage({ usersCommunities, community }: any) {
   if (!community) {
     return (
       <>
-        <Header />
         <Container sx={{ py: 4 }}>
           <Typography variant="h4">Community not found</Typography>
           <Button component={Link} href="/communities" sx={{ mt: 2 }}>

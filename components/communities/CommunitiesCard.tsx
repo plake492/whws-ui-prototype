@@ -39,19 +39,18 @@ export default function CommunitiesCard({ community, variant = 'vertical' }: Com
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2, whiteSpace: 'wrap' }}>
               {community.description}
             </Typography>
+
+            <Stack direction="column" spacing={1}>
+              {stats.map((stat, index) => (
+                <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  {stat.icon}
+                  <Typography variant="body2" color="text.secondary">
+                    {stat.label}
+                  </Typography>
+                </Box>
+              ))}
+            </Stack>
           </CardContent>
-
-          <Stack direction="column" spacing={1}>
-            {stats.map((stat, index) => (
-              <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                {stat.icon}
-                <Typography variant="body2" color="text.secondary">
-                  {stat.label}
-                </Typography>
-              </Box>
-            ))}
-          </Stack>
-
           <ActionButtons community={community} />
         </Box>
       </Card>
