@@ -17,7 +17,9 @@ import {
 } from '@mui/material';
 import { Dashboard, Settings, Logout } from '@mui/icons-material';
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@/contexts/AuthContext';
+import { signOut } from '@/app/(login)/_actions';
+import { useRouter } from 'next/navigation';
 
 const linkStyles = {
   fontWeight: 500,
@@ -33,9 +35,12 @@ const linkStyles = {
 
 const Navigation = ({ children }: { children: React.ReactNode }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const router = useRouter();
+
   const open = Boolean(anchorEl);
 
-  const { user, signOut } = useAuth();
+  const { user } = useUser();
+  console.log('user ==>', user);
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -45,10 +50,10 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     handleClose();
-    // Add logout logic here
-    console.log('Logout clicked');
+    router.push('/');
   };
   return (
     <>
@@ -99,9 +104,7 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
                         transform: 'scale(1.05)',
                       },
                     }}
-                  >
-                    JD
-                  </Avatar>
+                  />
                   <Menu
                     anchorEl={anchorEl}
                     open={open}
@@ -137,7 +140,7 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
                       <ListItemIcon>
                         <Logout fontSize="small" />
                       </ListItemIcon>
-                      <ListItemText onClick={signOut}>Logout</ListItemText>
+                      <ListItemText>Logout</ListItemText>
                     </MenuItem>
                   </Menu>
                 </Box>

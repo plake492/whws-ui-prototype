@@ -1,14 +1,6 @@
 {
   "recommendations": [
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
-    "bradlc.vscode-tailwindcss",
-    "dsznajder.es7-react-js-snippets",
-    "GitHub.copilot",
-    "GitHub.copilot-chat",
-    "Prisma.prisma",
-    "formulahendry.auto-rename-tag",
-    "eamodio.gitlens"
+    "denoland.vscode-deno"
   ],
   "unwantedRecommendations": []
 }

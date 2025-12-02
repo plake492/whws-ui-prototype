@@ -14,12 +14,10 @@ interface CommunityAndUser {
 }
 
 const _render = ({ user, usersCommunities, allCommunities }: CommunityAndUser) => {
-  console.log('user ==>', user);
-
   return (
     <>
       <CommunitiesHero />
-      {user ? (
+      {user && usersCommunities.length > 0 ? (
         <Grid container columnSpacing={4}>
           <Grid size={2}>
             <MyCommunities communities={usersCommunities} />

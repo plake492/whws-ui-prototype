@@ -3,13 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Container,
   Box,
   Typography,
   TextField,
   Button,
   Alert,
-  Paper,
   Link as MuiLink,
   Divider,
   InputAdornment,
@@ -17,11 +15,10 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
+import { signUp } from '../_actions';
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signUp } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -70,7 +67,7 @@ export default function SignupPage() {
         setSuccess(true);
         // Optionally redirect after successful signup
         setTimeout(() => {
-          router.push('/communities');
+          router.push('/');
         }, 2000);
       }
     } catch (err) {

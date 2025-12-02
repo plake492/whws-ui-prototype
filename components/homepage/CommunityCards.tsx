@@ -4,13 +4,17 @@ import { Box, Container, Typography, Button, Card, CardContent, Chip, Grid, Card
 import { ArrowForward } from '@mui/icons-material';
 import { Community } from '@/types';
 
+type CommunityWithCount = Omit<Community, 'memberCount'> & {
+  memberCount: number | null;
+  members?: number;
+};
+
 interface CommunityCardsProps {
-  communities: Community[];
+  communities: CommunityWithCount[];
 }
 
 // Community Cards Section - Asymmetric Layout
 const CommunityCards = ({ communities }: CommunityCardsProps) => {
-  console.log(communities);
   return (
     <Box sx={{ py: 12, px: { xs: 3, md: 8 } }}>
       <Container maxWidth={false}>
@@ -38,7 +42,7 @@ const CommunityCards = ({ communities }: CommunityCardsProps) => {
   );
 };
 
-const CommunityCard = ({ community }: { community: Community }) => {
+const CommunityCard = ({ community }: { community: CommunityWithCount }) => {
   return (
     <Card
       sx={{

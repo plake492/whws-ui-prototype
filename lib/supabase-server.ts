@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
+import { prisma } from "@/lib/prisma"
 
 /**
  * Creates a Supabase client for Server Components
@@ -44,7 +45,22 @@ export const getUser = cache(async () => {
     return null;
   }
 
-  return user;
+  if (!user) {
+    console.error("No supabase user found")
+    return null
+  }
+
+  const prismaUser = await prisma.users.findFirst({
+    where: {
+      id: user.id
+    }
+  })
+  if (!prismaUser) {
+    console.error("No prisma user found")
+    return null
+  }
+  
+  return prismaUser;
 });
 
 /**
@@ -76,6 +92,41 @@ export async function requireAuth() {
 
   if (!user) {
     throw new Error('Unauthorized - User must be logged in');
+  }
+
+  return user;
+}
+
+/**
+ * Helper for API routes - gets the current user from session
+ * Returns the user object or null if not authenticated
+ * Use this in API routes instead of creating a new Supabase client
+ *
+ * @example
+ * const user = await getApiUser();
+ * if (!user) {
+ *   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+ * }
+ */
+export async function getApiUser() {
+  return await getUser();
+}
+
+/**
+ * Helper for API routes that require authentication
+ * Returns the user or a 401 NextResponse if not authenticated
+ *
+ * @example
+ * const result = await requireApiAuth();
+ * if (result instanceof NextResponse) return result;
+ * const user = result;
+ */
+export async function requireApiAuth() {
+  const user = await getUser();
+
+  if (!user) {
+    const { NextResponse } = await import('next/server');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   return user;

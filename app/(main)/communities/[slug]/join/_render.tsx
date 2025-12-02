@@ -18,37 +18,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import FormWrapper from '@/components/FormWrapper';
+import { ageRanges, genderOptions, lifeStages, topicOptions } from '@/lib/intake';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { User } from '@/types';
-
-// Zod schema for intake form
-const ageRanges = ['Under 18', '18-24', '25-34', '35-44', '45-54', '55-64', '65+'];
-const genderOptions = ['Woman', 'Trans Woman', 'Non-binary', 'Intersex', 'Prefer not to say'];
-const lifeStages = [
-  'Trying to conceive',
-  'Pregnancy',
-  'Postpartum',
-  'Perimenopause',
-  'Menopause',
-  'Post-menopause',
-  'Chronic condition management',
-  "Women's general wellness",
-];
-const topicOptions = [
-  'Menstrual health',
-  'Fertility / TTC',
-  'Pregnancy',
-  'Postpartum care',
-  'Hormone health',
-  'PCOS',
-  'Endometriosis',
-  'Sexual health',
-  'Menopause',
-  'Chronic pain',
-];
+import { z } from 'zod';
 
 const IntakeFormSchema = z.object({
   name: z.string().min(1, 'Preferred name is required'),
@@ -83,7 +58,6 @@ const stepFieldGroups: string[][] = [
 
 export default function IntakeFormPage({ user }: { user: User }) {
   const [activeStep, setActiveStep] = useState(0);
-  console.log('user ==>', user);
 
   const {
     control,
@@ -94,7 +68,7 @@ export default function IntakeFormPage({ user }: { user: User }) {
   } = useForm<IntakeFormValues>({
     resolver: zodResolver(IntakeFormSchema) as any,
     defaultValues: {
-      name: user?.user_metadata?.display_name || '',
+      name: user?.name || '',
       email: user?.email || '',
       ageRange: '',
       location: '',

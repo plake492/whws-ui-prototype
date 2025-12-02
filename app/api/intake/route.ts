@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { getApiUser } from '@/lib/supabase-server';
 import { z } from 'zod';
 
 // Validation schema matching the form
@@ -25,27 +24,9 @@ const IntakeSubmissionSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // Get user session if available
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
-          },
-        },
-      }
-    );
-
-    const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id;
+    // Get user session if available (optional for intake)
+    const user = await getApiUser();
+    const userId = user?.id;
 
     // Parse and validate request body
     const body = await request.json();
@@ -73,7 +54,7 @@ export async function POST(request: NextRequest) {
     // Handle validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid form data', details: error.errors },
+        { error: 'Invalid form data', details: error.issues },
         { status: 400 }
       );
     }

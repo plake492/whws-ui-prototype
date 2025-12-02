@@ -15,13 +15,12 @@ import {
   IconButton,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useAuth } from '@/contexts/AuthContext';
+import { signIn } from '../_actions';
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
   const router = useRouter();
-  const { signIn } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -115,7 +114,11 @@ export default function LoginPage() {
       <Box sx={{ textAlign: 'center' }}>
         <Typography variant="body2" color="text.secondary">
           Don't have an account?{' '}
-          <MuiLink component={Link} href="/signup" sx={{ fontWeight: 600, textDecoration: 'none' }}>
+          <MuiLink
+            component={Link}
+            href={`/signup${redirect ? `?redirect=${redirect}` : ''}`}
+            sx={{ fontWeight: 600, textDecoration: 'none' }}
+          >
             Sign Up
           </MuiLink>
         </Typography>

@@ -3,8 +3,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import ThemeRegistry from '@/components/ThemeRegistry';
 import Footer from '@/components/Footer';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { UserProvider } from '@/contexts/AuthContext';
 import AnalyticsWrapper from '@/components/AnalyticsWrapper';
+import { getUser } from '@/lib/supabase-server';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,18 +22,20 @@ export const metadata: Metadata = {
   description: "Supporting women's health and wellness through community, resources, and expert guidance",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const user = await getUser();
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AuthProvider>
+        <UserProvider user={user}>
           <ThemeRegistry>
             <AnalyticsWrapper>
               {children}
               <Footer />
             </AnalyticsWrapper>
           </ThemeRegistry>
-        </AuthProvider>
+        </UserProvider>
       </body>
     </html>
   );

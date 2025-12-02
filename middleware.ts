@@ -30,10 +30,14 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  let session;
 
+  try {
+    const {
+      data: { session: supabaseSession },
+    } = await supabase.auth.getSession();
+    session = supabaseSession;
+  } catch (err) {}
   // Protected routes that require authentication
   const isProtectedRoute = protectedRoutes.some((route) => req.nextUrl.pathname.startsWith(route));
 
@@ -49,7 +53,9 @@ export async function middleware(req: NextRequest) {
   const isAuthRoute = authRoutes.some((route) => req.nextUrl.pathname.startsWith(route));
 
   if (isAuthRoute && session) {
-    return NextResponse.redirect(new URL('/communities', req.url));
+    const redirectTo = req.nextUrl.searchParams.get('redirect');
+    const redirectUrl = redirectTo ? new URL(redirectTo, req.url) : new URL('/', req.url);
+    return NextResponse.redirect(redirectUrl);
   }
 
   return response;

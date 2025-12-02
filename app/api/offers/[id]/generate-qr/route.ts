@@ -1,40 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateQRCode, QRCodeData } from '@/lib/qrCode';
-// import { prisma } from '@/lib/prisma';
-// import { createServerClient } from '@supabase/ssr';
-// import { cookies } from 'next/headers';
+import { prisma } from '@/lib/prisma';
+import { requireApiAuth } from '@/lib/supabase-server';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: offerId } = await params;
 
-    // TODO: Uncomment when auth is connected
-    /*
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-          },
-        },
-      }
-    );
+    const user = await requireApiAuth();
+    if (user instanceof NextResponse) return user;
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const userId = session.user.id;
+    const userId = user.id;
 
     // Check if offer exists and is valid
     const offer = await prisma.offer.findUnique({
@@ -65,26 +41,6 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const qrData: QRCodeData = {
       offerId,
       userId,
-      timestamp: Date.now(),
-      offerTitle: offer.title,
-    };
-
-    const qrCode = await generateQRCode(qrData);
-
-    return NextResponse.json({ qrCode });
-    */
-
-    // Temporary: Generate QR without auth check
-    const { getOfferById } = await import('@/lib/dummySponsors');
-    const offer = getOfferById(offerId);
-
-    if (!offer) {
-      return NextResponse.json({ error: 'Offer not found' }, { status: 404 });
-    }
-
-    const qrData: QRCodeData = {
-      offerId,
-      userId: 'demo-user',
       timestamp: Date.now(),
       offerTitle: offer.title,
     };
