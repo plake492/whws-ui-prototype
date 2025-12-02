@@ -17,7 +17,9 @@ import {
 } from '@mui/material';
 import { Dashboard, Settings, Logout } from '@mui/icons-material';
 import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@/contexts/AuthContext';
+import { signOut } from '@/app/(login)/_actions';
+import { useRouter } from 'next/navigation';
 
 const linkStyles = {
   fontWeight: 500,
@@ -33,9 +35,12 @@ const linkStyles = {
 
 const Navigation = ({ children }: { children: React.ReactNode }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const router = useRouter();
+
   const open = Boolean(anchorEl);
 
-  const { user, signOut } = useAuth();
+  const { user } = useUser();
+  console.log('user ==>', user);
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -45,10 +50,10 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut();
     handleClose();
-    // Add logout logic here
-    console.log('Logout clicked');
+    router.push('/');
   };
   return (
     <>
@@ -60,6 +65,7 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
             `linear-gradient(135deg, ${theme.palette.background.paper}EE 40%, ${theme.palette.background.default}EE 100%)`,
           backdropFilter: 'blur(10px)',
           borderBottom: '1px solid rgba(0,0,0,0.05)',
+          height: '100px',
         }}
       >
         <Container maxWidth={false} sx={{ px: { xs: 2, md: 8 } }}>
@@ -98,9 +104,7 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
                         transform: 'scale(1.05)',
                       },
                     }}
-                  >
-                    JD
-                  </Avatar>
+                  />
                   <Menu
                     anchorEl={anchorEl}
                     open={open}
@@ -136,16 +140,16 @@ const Navigation = ({ children }: { children: React.ReactNode }) => {
                       <ListItemIcon>
                         <Logout fontSize="small" />
                       </ListItemIcon>
-                      <ListItemText onClick={signOut}>Logout</ListItemText>
+                      <ListItemText>Logout</ListItemText>
                     </MenuItem>
                   </Menu>
                 </Box>
               ) : (
                 <>
                   <Typography sx={{ color: 'text.primary', fontWeight: 500 }} variant="subtitle1">
-                    <Link href={'login'}>Login</Link>
+                    <Link href={'/login'}>Login</Link>
                   </Typography>
-                  <Link href={'signup'}>
+                  <Link href={'/signup'}>
                     <Button
                       variant="contained"
                       sx={{

@@ -56,6 +56,7 @@ const CommunitiesHero = () => {
         <Box
           sx={{
             py: 4,
+            px: 2,
             borderRadius: '12px',
             background: (theme) =>
               `linear-gradient(135deg, ${theme.palette.background.paper}EE 40%, ${theme.palette.background.default}EE 100%)`,

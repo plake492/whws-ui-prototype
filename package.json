@@ -18,6 +18,7 @@
     "@clickhouse/client": "^1.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "@prisma/adapter-pg": "^7.0.0",
@@ -31,15 +32,18 @@
     "@types/qrcode": "^1.5.6",
     "data-fns": "^1.1.0",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
     "next": "16.0.1",
     "pg": "^8.13.1",
     "qrcode": "^1.5.4",
     "react": "19.2.0",
     "react-dom": "19.2.0",
+    "react-hook-form": "^7.67.0",
     "recharts": "^3.4.1",
     "tailwind": "^4.0.0",
     "ua-parser-js": "^2.0.6",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -60,6 +64,7 @@
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prisma": "^7.0.0",
+    "supabase": "^2.64.2",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"

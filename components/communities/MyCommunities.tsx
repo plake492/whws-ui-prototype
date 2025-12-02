@@ -1,8 +1,10 @@
 'use client';
 
 import { Typography, Grid, Box, Stack } from '@mui/material';
+import { CommunitiesProps } from '@/types';
+import Link from 'next/link';
 
-const MyCommunities = () => {
+const MyCommunities = ({ communities }: CommunitiesProps) => {
   return (
     <Box
       sx={{
@@ -17,10 +19,10 @@ const MyCommunities = () => {
         My Communities
       </Typography>
       <Stack direction={'column'} gap={2}>
-        {Array.from({ length: 5 }, (_, i) => (
+        {communities.map((community) => (
           <Grid
             container
-            key={i}
+            key={community.id}
             sx={{
               borderWidth: 0.5,
               borderStyle: 'solid',
@@ -38,7 +40,9 @@ const MyCommunities = () => {
             }}
           >
             <Grid>
-              <Box>My community</Box>
+              <Typography component={Link} variant="body1" href={`/communities/${community.slug}`}>
+                {community.name}
+              </Typography>
             </Grid>
           </Grid>
         ))}

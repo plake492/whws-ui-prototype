@@ -49,7 +49,7 @@ class ClickHouseClient {
 
       // Test connection
       await this.client.ping();
-      console.log('✅ ClickHouse connected (Next.js)');
+      console.log('[ANALYTICS] ClickHouse connected (Next.js)');
       this.isConnected = true;
     } catch (error) {
       console.error('❌ ClickHouse connection failed:', error);

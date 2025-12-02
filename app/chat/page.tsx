@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useContext } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useUser } from '@/contexts/AuthContext';
 import {
   Container,
   Box,
@@ -43,7 +43,8 @@ const INITAL_MESSAGE: Message = {
 };
 
 export default function Component() {
-  const { user } = useAuth();
+  const { user } = useUser();
+
   const [messages, setMessages] = useState<Message[]>([INITAL_MESSAGE]);
   const [hasStartedChat, setHasStartedChat] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

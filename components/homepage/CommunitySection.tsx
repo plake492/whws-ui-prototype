@@ -1,5 +1,11 @@
 import CommunityCards from './CommunityCards';
 import { prisma } from '@/lib/prisma';
+import { Community } from '@/types';
+
+type CommunityWithCount = Omit<Community, 'memberCount'> & {
+  memberCount: number | null;
+  members: number;
+};
 
 const CommunitySection = async () => {
   // Get all communities with member counts
@@ -16,15 +22,12 @@ const CommunitySection = async () => {
     },
   });
 
-  // Transform data to match Community type
-  const communities = rawCommunities.map((community) => ({
+  // Transform data to match Community type with serialized Decimal
+  const communities: CommunityWithCount[] = rawCommunities.map((community) => ({
     ...community,
     memberCount: community.memberCount ? Number(community.memberCount) : null,
     members: community._count?.members || 0,
   }));
-
-  console.log('Communities fetched:', communities.length);
-  console.log('First community:', communities[0]);
 
   return <CommunityCards communities={communities} />;
 };

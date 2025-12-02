@@ -62,7 +62,8 @@ const palette = {
     contrastText: '#fff',
   },
   secondary: {
-    main: '#D4A574',
+    // main: '#D4A574',
+    main: '#eac47c',
     light: '#E5C5A0',
     dark: '#c69564',
     contrastText: '#2c3e50',

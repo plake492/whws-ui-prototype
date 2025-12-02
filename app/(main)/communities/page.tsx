@@ -1,19 +1,8 @@
-import GradientWrapper from '@/components/GradientWrapper';
-import { prisma } from '@/lib/prisma';
 import Communities from './_render';
+import { getCommunities } from './_actions';
 
 export default async function CommunitiesPage() {
-  const rawCommunities = await prisma.community.findMany({});
+  const { user, allCommunities, usersCommunities } = await getCommunities();
 
-  // Serialize Decimal types to numbers for client components
-  const communities = rawCommunities.map((community) => ({
-    ...community,
-    memberCount: community.memberCount ? Number(community.memberCount) : 0,
-  }));
-
-  return (
-    <GradientWrapper>
-      <Communities communities={communities} />
-    </GradientWrapper>
-  );
+  return <Communities user={user} allCommunities={allCommunities} usersCommunities={usersCommunities} />;
 }

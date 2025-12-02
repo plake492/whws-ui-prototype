@@ -2,7 +2,7 @@
 
 import { Container, Typography, Box, Stack } from '@mui/material';
 
-import PostCard from '@/components/PostCard';
+import PostCard from '@/components/communities/PostCard';
 import { dummyPosts, getUserById } from '@/lib/dummyData';
 
 const RecentActivity = () => {
