@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { cache } from 'react';
-import { prisma } from "@/lib/prisma"
+import { prisma } from '@/lib/prisma';
 
 /**
  * Creates a Supabase client for Server Components
@@ -46,20 +46,20 @@ export const getUser = cache(async () => {
   }
 
   if (!user) {
-    console.error("No supabase user found")
-    return null
+    console.error('No supabase user found');
+    return null;
   }
 
-  const prismaUser = await prisma.users.findFirst({
+  const prismaUser = await prisma.users.findUnique({
     where: {
-      id: user.id
-    }
-  })
+      id: user.id,
+    },
+  });
   if (!prismaUser) {
-    console.error("No prisma user found")
-    return null
+    console.error('No prisma user found');
+    return null;
   }
-  
+
   return prismaUser;
 });
 

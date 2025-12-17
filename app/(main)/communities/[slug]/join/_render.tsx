@@ -24,6 +24,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { User } from '@/types';
 import { z } from 'zod';
+import { joinCommunity } from '../../_actions';
 
 const IntakeFormSchema = z.object({
   name: z.string().min(1, 'Preferred name is required'),
@@ -119,7 +120,8 @@ export default function IntakeFormPage({ user }: { user: User }) {
 
       // TODO: Show success message and/or redirect user
       // For now, just log success
-      alert('Thank you! Your intake form has been submitted successfully.');
+      // alert('Thank you! Your intake form has been submitted successfully.');
+      await joinCommunity({ communityId });
     } catch (error) {
       console.error('Error submitting intake form:', error);
       alert(error instanceof Error ? error.message : 'An error occurred while submitting the form. Please try again.');

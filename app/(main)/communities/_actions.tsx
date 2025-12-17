@@ -11,15 +11,7 @@ export const getCommunities = async (): Promise<{
   allCommunities: CommunityWithUser[];
   usersCommunities: CommunityWithUser[];
 }> => {
-  const supabaseUser = await getSupabaseUser();
-
-  const user = supabaseUser
-    ? await prisma.users.findUnique({
-        where: {
-          id: supabaseUser.id,
-        },
-      })
-    : null;
+  const user = await getSupabaseUser();
 
   const userCommunities = user
     ? await prisma.communityMember.findMany({
@@ -51,6 +43,23 @@ export const getCommunities = async (): Promise<{
   return { user, allCommunities: communities, usersCommunities: communitiesWithUser };
 };
 
+export const joinCommunity = async ({ communityId }: { communityId: string }) => {
+  const user = await getSupabaseUser();
+
+  if (!user) {
+    console.error('[COMMUNITY]: No user');
+    return null;
+  }
+
+  await prisma.communityMember.create({
+    data: {
+      userId: user?.id,
+      communityId: communityId,
+      joinedAt: new Date(),
+    },
+  });
+};
+
 export const getCommunityBySlug = async (slug: string) => {
   const rawCommunity = await prisma.community.findFirstOrThrow({
     where: {
@@ -59,4 +68,20 @@ export const getCommunityBySlug = async (slug: string) => {
   });
 
   return { ...rawCommunity, memberCount: rawCommunity.memberCount ? Number(rawCommunity.memberCount) : 0 };
+};
+export const leaveCommunity = async ({ communityId }: { communityId: string }) => {
+  const user = await getSupabaseUser();
+
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  await prisma.communityMember.delete({
+    where: {
+      userId_communityId: {
+        userId: user.id,
+        communityId: communityId,
+      },
+    },
+  });
 };
